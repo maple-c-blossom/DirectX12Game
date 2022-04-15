@@ -771,16 +771,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         viewport[0].MinDepth = 0.0f;
         viewport[0].MaxDepth = 1.0f;
 
-        viewport[1].Width = 200;
-        viewport[1].Height = 200;
-        viewport[1].TopLeftX = viewport[0].Width;
-        viewport[1].TopLeftY = viewport[0].Height;
+        viewport[1].Width = 400;
+        viewport[1].Height = 400;
+        viewport[1].TopLeftX = 200;
+        viewport[1].TopLeftY = 0;
         viewport[1].MinDepth = 0.0f;
         viewport[1].MaxDepth = 1.0f;
 
+        viewport[2].Width = 400;
+        viewport[2].Height = 400;
+        viewport[2].TopLeftX = 400;
+        viewport[2].TopLeftY = 200;
+        viewport[2].MinDepth = 0.0f;
+        viewport[2].MaxDepth = 1.0f;
 
+        viewport[3].Width = 400;
+        viewport[3].Height = 400;
+        viewport[3].TopLeftX = 0;
+        viewport[3].TopLeftY = 400;
+        viewport[3].MinDepth = 0.0f;
+        viewport[3].MaxDepth = 1.0f;
 
-        commandList->RSSetViewports(4, viewport);
+        commandList->RSSetViewports(1, &viewport[0]);
 
 #pragma endregion ビューポートの設定コマンド
         //------------------------------
@@ -811,6 +823,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         //描画コマンド
         commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
 
+        commandList->RSSetViewports(1, &viewport[1]);
+
+        commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
+
+        commandList->RSSetViewports(1, &viewport[2]);
+
+        commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
+
+        commandList->RSSetViewports(1, &viewport[3]);
+
+        commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
 #pragma endregion 描画コマンド
         //----------------------
 
