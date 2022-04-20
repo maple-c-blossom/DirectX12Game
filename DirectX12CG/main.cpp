@@ -407,6 +407,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
          {-0.5f,-0.5f,0.0f},
          {-0.5f,+0.5f,0.0f},
          {+ 0.5f,-0.5f,0.0f},
+         {+0.5f,+0.5f,0.0f},
      };
 
      UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
@@ -568,6 +569,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
      D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipelineDesc{};
      //-------------------------
 
+
+     //-------------------------
+
      //頂点シェーダ、ピクセルシェーダをパイプラインに設定-----------------------------
 #pragma region 頂点シェーダとピクセルシェーダをパイプラインに設定
 
@@ -588,8 +592,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
      gpipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
 #pragma endregion サンプルマスクとラスタライザステートの設定
-//------------------------------------
-
+    //------------------------------------
 
       //ブレンドステートの設定-------------------------------
 #pragma region ブレンドステートの設定
@@ -631,7 +634,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
      gpipelineDesc.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 
 #pragma endregion その他の設定
-//----------------
+     //----------------
+
+
 
      //ルートシグネチャの生成--------------------------
 #pragma region ルートシグネチャの生成
@@ -664,10 +669,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
      ComPtr<ID3D12PipelineState> pipelinestate = nullptr;
      result = device->CreateGraphicsPipelineState(&gpipelineDesc, IID_PPV_ARGS(&pipelinestate));
      assert(SUCCEEDED(result));
+
+     ComPtr<ID3D12PipelineState> pipelinestateWire = nullptr;
+     gpipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+     result = device->CreateGraphicsPipelineState(&gpipelineDesc, IID_PPV_ARGS(&pipelinestateWire));
+     assert(SUCCEEDED(result));
 #pragma endregion パイプラインステートの生成
      //-----------------------------
 
      float clearColor[] = { 0.1f,0.25f, 0.5f,0.0f }; // 青っぽい色
+
+     bool squareFlag = false;
+
+     bool WireFlag = false;
 
 #pragma endregion
     while (true)
@@ -716,6 +730,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         else
         {
             clearColor[0] = { 0.1f };
+        } 
+
+        if (key[DIK_1] && !oldkey[DIK_1])
+        {
+            squareFlag = !squareFlag;
+        }
+
+        if (key[DIK_2] && !oldkey[DIK_2])
+        {
+            WireFlag = !WireFlag;
         }
 
 
@@ -811,16 +835,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma endregion シザー矩形の設定コマンド
         //------------------
+        if (WireFlag)
+        {
+            commandList->SetPipelineState(pipelinestateWire.Get());
+        }
+        else 
+        {
+            commandList->SetPipelineState(pipelinestate.Get());
+        }
 
-        commandList->SetPipelineState(pipelinestate.Get());
         commandList->SetGraphicsRootSignature(rootsignature.Get());
         
 
         //プリミティブ形状の設定コマンド（三角形リスト）--------------------------
-        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        //描画コマンド
+        if (squareFlag)
+        {
+            commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+        }
+        else
+        {
+            commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        }
         commandList->IASetVertexBuffers(0, 1, &vbView);
 
-        //描画コマンド
         commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
 
         commandList->RSSetViewports(1, &viewport[1]);
@@ -834,6 +872,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         commandList->RSSetViewports(1, &viewport[3]);
 
         commandList->DrawInstanced(_countof(vertices), 1, 0, 0);
+
+
 #pragma endregion 描画コマンド
         //----------------------
 
