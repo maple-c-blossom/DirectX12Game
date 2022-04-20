@@ -754,6 +754,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
      float clearColor[] = { 0.1f,0.25f, 0.5f,0.0f }; // 青っぽい色
 
+     XMFLOAT4 objColor = { 1, 0, 0, 0.5f };
 #pragma endregion
     while (true)
     {
@@ -793,6 +794,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma endregion キーボード初期化
         //----------------------------------------
+
+
+        //result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);
+
+        //assert(SUCCEEDED(result));
+
+        if (objColor.y <= 1)
+        {
+            objColor.y += 0.01f;
+        }
+
+        constMapMaterial->color = objColor;
 
 
 #pragma endregion 更新処理
@@ -874,6 +887,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         //プリミティブ形状の設定コマンド（三角形リスト）--------------------------
         commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         commandList->IASetVertexBuffers(0, 1, &vbView);
+
+
 
         
         //定数バッファビュー(CBV)の設定コマンド
