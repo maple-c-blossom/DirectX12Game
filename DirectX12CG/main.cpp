@@ -13,6 +13,7 @@
 #include "DxWindow.h"
 #include "Dx12.h"
 #include <memory>
+#include <time.h>
 
 #pragma endregion include
 
@@ -140,22 +141,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
      //画像イメージデータの配列
      XMFLOAT4* imageData = new XMFLOAT4[imageDataCount];
 
+     srand(time(nullptr));
      for (int i = 0; i < imageDataCount; i++)
      {
-         imageData[i].x = 1.0f;//R
-         imageData[i].y = 0.0f;//G
-         imageData[i].z = 0.0f;//B
-         if (i != 0)
-         {
-             if ((i / 10) % 2 == 0)
-             {
-                 imageData[i].w = 1.0f;//A
-             }
-             else 
-             {
-                 imageData[i].w = 0;//A
-             }
-         }
+         imageData[i].x = (float)(rand() % 255) / 255 ;//R
+         imageData[i].y = (float)(rand() % 255) / 255;//G
+         imageData[i].z = (float)(rand() % 255) / 255;//B
+         imageData[i].w = 1.0f;//A
          
      }
 
