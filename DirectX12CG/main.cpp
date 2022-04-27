@@ -186,7 +186,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         matWorld.CreateMatrixWorld(XMMatrixScaling(1.0f, 0.5f, 1.0f), matWorld.ReturnMatRot(matWorld.matRot,15.0f,30.0f,0.0f), XMMatrixTranslation(-50.0f, 0.0f, 0.0f));
         //ビュー変換行列
         View matView;
-        matView.CreateMatrixView(XMFLOAT3(0.0f, 100.0f, -100.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+        matView.CreateMatrixView(XMFLOAT3(0.0f, 0.0f, -100.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
         //射影変換行列
         Projection matProjection;
          matProjection.CreateMatrixProjection(XMConvertToRadians(45.0f),(float)dxWindow.window_width / dxWindow.window_height, 0.1f, 1000.0f);
@@ -758,21 +758,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         }
 
 #pragma region 更新処理
-        if (input.IsKeyDown(DIK_D) || input.IsKeyDown(DIK_A))
-        {
-            if (input.IsKeyDown(DIK_D)) { angle += XMConvertToRadians(1.0f); }
-            else if (input.IsKeyDown(DIK_A)) { angle -= XMConvertToRadians(1.0f); }
+        rotasion.z += XMConvertToRadians(1.0f); 
 
-            matView.eye.x = -100.0f * sinf(angle);
-            matView.eye.z = -100.0f * cosf(angle);
-            matView.UpDateMatrixView();
 
-        }
+        matView.eye.z -= 2.5f;
+
+        matView.UpDateMatrixView();
 
         if (input.IsKeyDown(DIK_UP) || input.IsKeyDown(DIK_DOWN) || input.IsKeyDown(DIK_LEFT) || input.IsKeyDown(DIK_RIGHT))
         {
-            if (input.IsKeyDown(DIK_UP)) { position.z += 1.0f; }
-            else if (input.IsKeyDown(DIK_DOWN)) { position.z -= 1.0f; }
+            if (input.IsKeyDown(DIK_UP)) { position.y += 1.0f; }
+            else if (input.IsKeyDown(DIK_DOWN)) { position.y -= 1.0f; }
 
             if (input.IsKeyDown(DIK_RIGHT)) { position.x += 1.0f; }
             else if (input.IsKeyDown(DIK_LEFT)) { position.x -= 1.0f; }
