@@ -557,6 +557,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region ゲームループ用変数
      float angle = 0.0f;
 
+
+     XMFLOAT3 targetVec = { 0,0,1 };
+     XMFLOAT3 Angle = { 0,0,0 };
 #pragma endregion ゲームループ用変数
      //--------------------------
      
@@ -574,25 +577,53 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         }
 
 #pragma region 更新処理
-        if (input.IsKeyDown(DIK_D) || input.IsKeyDown(DIK_A))
+        if (input.IsKeyDown(DIK_RIGHT) || input.IsKeyDown(DIK_LEFT) || input.IsKeyDown(DIK_UP) || input.IsKeyDown(DIK_DOWN))
         {
-            if (input.IsKeyDown(DIK_D)) { angle += XMConvertToRadians(1.0f); }
-            else if (input.IsKeyDown(DIK_A)) { angle -= XMConvertToRadians(1.0f); }
 
-            matView.eye.x = -100.0f * sinf(angle);
-            matView.eye.z = -100.0f * cosf(angle);
-            matView.UpDateMatrixView();
+            if (input.IsKeyDown(DIK_RIGHT)) { Angle.y += 0.05f; };
+            if (input.IsKeyDown(DIK_LEFT)) { Angle.y -= 0.05f; };
+
+            if (input.IsKeyDown(DIK_UP)) { Angle.x += 0.05f; };
+            if (input.IsKeyDown(DIK_DOWN)) { Angle.x -= 0.05f; };
+
+            targetVec.x = sinf(Angle.y);
+            targetVec.y = sinf(Angle.x);
+            targetVec.z = cosf(Angle.y + Angle.x);
+
 
         }
 
-        if (input.IsKeyDown(DIK_UP) || input.IsKeyDown(DIK_DOWN) || input.IsKeyDown(DIK_LEFT) || input.IsKeyDown(DIK_RIGHT))
+        if (input.IsKeyDown(DIK_D) || input.IsKeyDown(DIK_A) || input.IsKeyDown(DIK_W) || input.IsKeyDown(DIK_S))
+        {
+            XMFLOAT3 move = { 0.0f,0.0f,0.0f };
+            if (input.IsKeyDown(DIK_W)) { move.z += 1.0f; }
+            else if (input.IsKeyDown(DIK_S)) { move.z -= 1.0f; }
+
+            //if (IsKeyDown(DIK_W, key)) { move.z += 1.0f; }
+            //else if (IsKeyDown(DIK_S, key)) { move.z -= 1.0f; }
+
+            matView.eye.x += targetVec.x * move.z;
+            matView.eye.y += targetVec.y * move.z;
+            matView.eye.z += targetVec.z * move.z;
+
+
+
+        }
+
+        matView.target.x = matView.eye.x + targetVec.x;
+        matView.target.y = matView.eye.y + targetVec.y;
+        matView.target.z = matView.eye.z + targetVec.z;
+
+        matView.UpDateMatrixView();
+
+       /* if (input.IsKeyDown(DIK_UP) || input.IsKeyDown(DIK_DOWN) || input.IsKeyDown(DIK_LEFT) || input.IsKeyDown(DIK_RIGHT))
         {
             if (input.IsKeyDown(DIK_UP)) { object3D[0].position.z += 1.0f; }
             else if (input.IsKeyDown(DIK_DOWN)) { object3D[0].position.z -= 1.0f; }
 
             if (input.IsKeyDown(DIK_RIGHT)) { object3D[0].position.x += 1.0f; }
             else if (input.IsKeyDown(DIK_LEFT)) { object3D[0].position.x -= 1.0f; }
-        }
+        }*/
 
 
         for (int i = 0; i < _countof(object3D); i++)
@@ -600,19 +631,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             object3D[i].Updata(matView, matProjection);
         }
 
-        MCBMatrix matrix1;
-        matrix1._11 = 10; matrix1._21 = 15; matrix1._31 = 98; matrix1._41 = 84;
-        matrix1._12 = 11; matrix1._22 = 51; matrix1._32 = 15; matrix1._42 = 14;
-        matrix1._13 = 25; matrix1._23 = 21; matrix1._33 = 61; matrix1._43 = 16;
-        matrix1._14 = 21; matrix1._24 = 87; matrix1._34 = 48; matrix1._44 = 45;
-
-        MCBMatrix matrix2;
-        matrix2._11 = 45; matrix2._21 = 2; matrix2._31 = 98; matrix2._41 = 104;
-        matrix2._12 = 15; matrix2._22 = 55; matrix2._32 = 125; matrix2._42 = 124;
-        matrix2._13 = 35; matrix2._23 = 34; matrix2._33 = 61; matrix2._43 = 160;
-        matrix2._14 = 54; matrix2._24 = 857; matrix2._34 = 482; matrix2._44 = 15;
-
-        matrix1 = matrix1 * matrix2;
 
 #pragma endregion 更新処理
 

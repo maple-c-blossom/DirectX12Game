@@ -13,6 +13,7 @@ void WorldMatrix::SetMatRotX(float angle, bool ConvertToRadians)
 	{
 		matRot *= XMMatrixRotationX(angle);
 	}
+
 }
 
 void WorldMatrix::SetMatRotY(float angle, bool ConvertToRadians)

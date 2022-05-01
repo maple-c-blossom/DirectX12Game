@@ -1,13 +1,40 @@
 #include "MCBMatrix.h"
 
-
-
 void MCB::MCBMatrix::MCBMatrixIdentity()
 {
 	_11 = 1.0f; _12 = 0.0f; _13 = 0.0f; _14 = 0.0f;
 	_21 = 0.0f; _22 = 1.0f; _23 = 0.0f; _24 = 0.0f;
 	_31 = 0.0f; _32 = 0.0f; _33 = 1.0f; _34 = 0.0f;
 	_41 = 0.0f; _42 = 0.0f; _43 = 0.0f; _44 = 1.0f;
+}
+
+MCB::MCBMatrix MCB::MCBMatrix::MCBMatrixRota(double angle, DirectX::XMFLOAT3 vector)
+{
+	MCBMatrix matRot = ReturnMatrixIdentity();
+
+	matRot._11 = (vector.x * vector.x) * (1 - cos(angle)) + cos(angle);
+	matRot._12 = vector.x * vector.y * (1 - cos(angle)) - vector.z * sin(angle);
+	matRot._13 = vector.x * vector.z * (1 - cos(angle)) + vector.y * sin(angle);
+	matRot._14 = 0;
+
+	matRot._21 = vector.x * vector.y * (1 - cos(angle)) + vector.z * sin(angle);
+	matRot._22 = (vector.y * vector.y) * (1 - cos(angle)) + cos(angle);
+	matRot._23 = vector.y * vector.z * (1 - cos(angle)) + vector.x * sin(angle);
+	matRot._24 = 0;
+
+	matRot._31 = vector.x * vector.z * (1 - cos(angle)) - vector.y * sin(angle);
+	matRot._32 = vector.y * vector.z * (1 - cos(angle)) + vector.x * sin(angle);
+	matRot._33 = (vector.z * vector.z) * (1 - cos(angle)) + cos(angle);
+	matRot._34 = 0;
+
+	matRot._41 = 0;
+	matRot._42 = 0;
+	matRot._43 = 0;
+	matRot._44 = 1;
+
+	return matRot;
+
+
 }
 
 MCB::MCBMatrix MCB::MCBMatrix::ReturnMatrixIdentity()
