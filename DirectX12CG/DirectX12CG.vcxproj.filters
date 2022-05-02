@@ -37,9 +37,6 @@
     <Filter Include="ヘッダー ファイル\3D">
       <UniqueIdentifier>{82d29c91-4bed-4af8-99fe-360042030ac8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Input">
-      <UniqueIdentifier>{fcaaf576-eca5-4dc0-80d0-8cdc84857f58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Object">
       <UniqueIdentifier>{a0aa570b-6a62-4bb5-bdea-446a023511d8}</UniqueIdentifier>
     </Filter>
@@ -66,6 +63,9 @@
     </Filter>
     <Filter Include="ソース ファイル\Vertices&amp;Index">
       <UniqueIdentifier>{bde88a0d-bf14-4210-ad52-b644a1616865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Input">
+      <UniqueIdentifier>{fcaaf576-eca5-4dc0-80d0-8cdc84857f58}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +122,9 @@
     </ClCompile>
     <ClCompile Include="MCBMatrix.cpp">
       <Filter>ソース ファイル\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -183,6 +186,9 @@
     </ClInclude>
     <ClInclude Include="MCBMatrix.h">
       <Filter>ヘッダー ファイル\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

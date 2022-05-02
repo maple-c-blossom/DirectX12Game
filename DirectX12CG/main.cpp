@@ -33,6 +33,7 @@
 #include "RootParameter.h"
 #include "Vertex.h"
 #include "MCBMatrix.h"
+#include "Util.h"
 
 #pragma endregion 自作.h include
 
@@ -115,6 +116,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
              object3D[i].rotasion = { 0.0f,0.0f,XMConvertToRadians(30.0f) };
 
              object3D[i].position = { 0.0f,0.0f,-0.8f };
+         }
+     }
+
+     Object3d Rales[objectNum * 2];
+     for (int i = 0; i < objectNum * 2; i++)
+     {
+         Rales[i].Init(dx);
+         Rales[i].position.y = -25.0f;
+         if (i > 0)
+         {
+             Rales[i].position.z = Rales[i - 1].position.z + 20;
          }
      }
 
@@ -556,10 +568,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
      //ゲームループ用変数--------------------------------
 #pragma region ゲームループ用変数
      float angle = 0.0f;
-
+     const int DEFAULT_MOVE_LIMIT = 60;
 
      XMFLOAT3 targetVec = { 0,0,1 };
      XMFLOAT3 Angle = { 0,0,0 };
+     XMFLOAT3 BeforePosition = { 0,0,0 };
+     XMINT3 moveLimit = { DEFAULT_MOVE_LIMIT,DEFAULT_MOVE_LIMIT,DEFAULT_MOVE_LIMIT};
+     XMINT3 moveTime = {0,0,0};
+     XMFLOAT3 trackingPos = { 0,0,0 };
+     XMFLOAT3 trackingDistance = { 100,100,100 };
+
 #pragma endregion ゲームループ用変数
      //--------------------------
      
@@ -614,23 +632,83 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         matView.target.y = matView.eye.y + targetVec.y;
         matView.target.z = matView.eye.z + targetVec.z;
 
+
         matView.UpDateMatrixView();
 
-       /* if (input.IsKeyDown(DIK_UP) || input.IsKeyDown(DIK_DOWN) || input.IsKeyDown(DIK_LEFT) || input.IsKeyDown(DIK_RIGHT))
+
+#pragma region 追尾中に追尾先が移動した場合の処理
+        //x軸
+        if (trackingPos.x != matView.target.x + (targetVec.x * trackingDistance.x))
         {
-            if (input.IsKeyDown(DIK_UP)) { object3D[0].position.z += 1.0f; }
-            else if (input.IsKeyDown(DIK_DOWN)) { object3D[0].position.z -= 1.0f; }
+            trackingPos.x = matView.target.x + (targetVec.x * trackingDistance.x);//追尾先を変更
+            BeforePosition.x = object3D[0].position.x;//イージング用移動前座標を現在位置と同期
+            moveTime.x = 0;//タイマーリセット
+        }
+        //y軸
+        if (trackingPos.y != matView.target.y + (targetVec.y * trackingDistance.y))
+        {
+            trackingPos.y = matView.target.y + (targetVec.y * trackingDistance.y);//追尾先を変更
+            BeforePosition.y = object3D[0].position.y;//イージング用移動前座標を現在位置と同期
+            moveTime.y = 0;//タイマーリセット
+        }
+        //z軸
+        if (trackingPos.z != matView.target.z + (targetVec.z * trackingDistance.z))
+        {
+            trackingPos.z = matView.target.z + (targetVec.z * trackingDistance.z);//追尾先を変更
+            BeforePosition.z = object3D[0].position.z;//イージング用移動前座標を現在位置と同期
+            moveTime.z = 0;//タイマーリセット
+        }
+#pragma endregion 追尾中に追尾先が移動した場合の処理
 
-            if (input.IsKeyDown(DIK_RIGHT)) { object3D[0].position.x += 1.0f; }
-            else if (input.IsKeyDown(DIK_LEFT)) { object3D[0].position.x -= 1.0f; }
-        }*/
 
+#pragma region 追尾
+        if (object3D[0].position.x != trackingPos.x)
+        {
+            moveTime.x++;
+            object3D[0].position.x = OutQuad(BeforePosition.x, trackingPos.x, moveLimit.x, moveTime.x);
+        }
+        else
+        {
+            BeforePosition.x = object3D[0].position.x;
+            moveTime.x = 0;
+            moveLimit.x = DEFAULT_MOVE_LIMIT;
+        }
+
+        if (object3D[0].position.y != trackingPos.y)
+        {
+            moveTime.y++;
+            object3D[0].position.y = OutQuad(BeforePosition.y, trackingPos.y, moveLimit.x, moveTime.y);
+        }
+        else
+        {
+            BeforePosition.y = object3D[0].position.y;
+            moveTime.y = 0;
+            moveLimit.y = DEFAULT_MOVE_LIMIT;
+        }
+
+        if (object3D[0].position.z != trackingPos.z)
+        {
+            moveTime.z++;
+            object3D[0].position.z = OutQuad(BeforePosition.z, trackingPos.z, moveLimit.x, moveTime.z);
+        }
+        else
+        {
+            BeforePosition.z = object3D[0].position.z;
+            moveTime.z = 0;
+            moveLimit.z = DEFAULT_MOVE_LIMIT;
+        }
+#pragma endregion 追尾
 
         for (int i = 0; i < _countof(object3D); i++)
         {
             object3D[i].Updata(matView, matProjection);
         }
 
+
+        for (int i = 0; i < _countof(Rales); i++)
+        {
+            Rales[i].Updata(matView, matProjection);
+        }
 
 #pragma endregion 更新処理
 
@@ -727,6 +805,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         for (int i = 0; i < _countof(object3D); i++)
         {
             object3D[i].Draw(dx, vbView, vertex.ibView, _countof(vertex.boxIndices));
+        }
+
+        for (int i = 0; i < _countof(Rales); i++)
+        {
+            Rales[i].Draw(dx,  vbView, vertex.ibView, _countof(vertex.boxIndices));
         }
 
 #pragma endregion 描画コマンド

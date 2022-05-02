@@ -12,6 +12,8 @@ namespace MCB
         DirectX::XMFLOAT3 target{ 0,0,1 };//注視点座標(カメラが見ている座標、XMMatrixLookAtLHはこの座標から視点座標へのベクトルを求めることで向きを決定している)
         DirectX::XMFLOAT3 up{ 0,1,0 };//上方向ベクトル(カメラの上側がどこかを決定する座標。)
 
+
+
         /// <summary>
         /// 引数の値をクラスのそれぞれの変数に代入した上でビュー変換行列を作成します。
         /// </summary>

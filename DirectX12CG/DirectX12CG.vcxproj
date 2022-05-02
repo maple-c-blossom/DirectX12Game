@@ -34,6 +34,7 @@
     <ClCompile Include="TexImgData.cpp" />
     <ClCompile Include="TextureBuffer.cpp" />
     <ClCompile Include="TextureFile.cpp" />
+    <ClCompile Include="Util.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="View.cpp" />
     <ClCompile Include="WorldMatrix.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="TexImgData.h" />
     <ClInclude Include="TextureBuffer.h" />
     <ClInclude Include="TextureFile.h" />
+    <ClInclude Include="Util.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="WorldMatrix.h" />

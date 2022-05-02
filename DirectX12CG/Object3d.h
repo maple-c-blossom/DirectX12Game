@@ -35,6 +35,9 @@ namespace MCB
 
         //ワールド行列
         WorldMatrix matWorld;
+
+        DirectX::XMFLOAT3 frontVec = { 0, 0, 1 };
+
         //親オブジェクトへのポインタ
         Object3d* parent = nullptr;
 
