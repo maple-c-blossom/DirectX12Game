@@ -636,69 +636,86 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         matView.UpDateMatrixView();
 
 
+        if (input.IsKeyTrigger(DIK_SPACE))
+        {
+            object3D[0].trackingFlag = !object3D[0].trackingFlag;
+        }
+
+        if (!object3D[0].trackingFlag)
+        {
+            objMaterial.constMapMaterial->color = XMFLOAT4(1.0f,0.0f,0.0f,1.0f);
+        }
+        else
+        {
+            objMaterial.constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+
+        if (object3D[0].trackingFlag)
+        {
+
 #pragma region 追尾中に追尾先が移動した場合の処理
-        //x軸
-        if (trackingPos.x != matView.target.x + (targetVec.x * trackingDistance.x))
-        {
-            trackingPos.x = matView.target.x + (targetVec.x * trackingDistance.x);//追尾先を変更
-            BeforePosition.x = object3D[0].position.x;//イージング用移動前座標を現在位置と同期
-            moveTime.x = 0;//タイマーリセット
-        }
-        //y軸
-        if (trackingPos.y != matView.target.y + (targetVec.y * trackingDistance.y))
-        {
-            trackingPos.y = matView.target.y + (targetVec.y * trackingDistance.y);//追尾先を変更
-            BeforePosition.y = object3D[0].position.y;//イージング用移動前座標を現在位置と同期
-            moveTime.y = 0;//タイマーリセット
-        }
-        //z軸
-        if (trackingPos.z != matView.target.z + (targetVec.z * trackingDistance.z))
-        {
-            trackingPos.z = matView.target.z + (targetVec.z * trackingDistance.z);//追尾先を変更
-            BeforePosition.z = object3D[0].position.z;//イージング用移動前座標を現在位置と同期
-            moveTime.z = 0;//タイマーリセット
-        }
+            //x軸
+            if (trackingPos.x != matView.target.x + (targetVec.x * trackingDistance.x))
+            {
+                trackingPos.x = matView.target.x + (targetVec.x * trackingDistance.x);//追尾先を変更
+                BeforePosition.x = object3D[0].position.x;//イージング用移動前座標を現在位置と同期
+                moveTime.x = 0;//タイマーリセット
+            }
+            //y軸
+            if (trackingPos.y != matView.target.y + (targetVec.y * trackingDistance.y))
+            {
+                trackingPos.y = matView.target.y + (targetVec.y * trackingDistance.y);//追尾先を変更
+                BeforePosition.y = object3D[0].position.y;//イージング用移動前座標を現在位置と同期
+                moveTime.y = 0;//タイマーリセット
+            }
+            //z軸
+            if (trackingPos.z != matView.target.z + (targetVec.z * trackingDistance.z))
+            {
+                trackingPos.z = matView.target.z + (targetVec.z * trackingDistance.z);//追尾先を変更
+                BeforePosition.z = object3D[0].position.z;//イージング用移動前座標を現在位置と同期
+                moveTime.z = 0;//タイマーリセット
+            }
 #pragma endregion 追尾中に追尾先が移動した場合の処理
 
-
 #pragma region 追尾
-        if (object3D[0].position.x != trackingPos.x)
-        {
-            moveTime.x++;
-            object3D[0].position.x = OutQuad(BeforePosition.x, trackingPos.x, moveLimit.x, moveTime.x);
-        }
-        else
-        {
-            BeforePosition.x = object3D[0].position.x;
-            moveTime.x = 0;
-            moveLimit.x = DEFAULT_MOVE_LIMIT;
-        }
+            if (object3D[0].position.x != trackingPos.x)
+            {
+                moveTime.x++;
+                object3D[0].position.x = OutQuad(BeforePosition.x, trackingPos.x, moveLimit.x, moveTime.x);
+            }
+            else
+            {
+                BeforePosition.x = object3D[0].position.x;
+                moveTime.x = 0;
+                moveLimit.x = DEFAULT_MOVE_LIMIT;
+            }
 
-        if (object3D[0].position.y != trackingPos.y)
-        {
-            moveTime.y++;
-            object3D[0].position.y = OutQuad(BeforePosition.y, trackingPos.y, moveLimit.x, moveTime.y);
-        }
-        else
-        {
-            BeforePosition.y = object3D[0].position.y;
-            moveTime.y = 0;
-            moveLimit.y = DEFAULT_MOVE_LIMIT;
-        }
+            if (object3D[0].position.y != trackingPos.y)
+            {
+                moveTime.y++;
+                object3D[0].position.y = OutQuad(BeforePosition.y, trackingPos.y, moveLimit.x, moveTime.y);
+            }
+            else
+            {
+                BeforePosition.y = object3D[0].position.y;
+                moveTime.y = 0;
+                moveLimit.y = DEFAULT_MOVE_LIMIT;
+            }
 
-        if (object3D[0].position.z != trackingPos.z)
-        {
-            moveTime.z++;
-            object3D[0].position.z = OutQuad(BeforePosition.z, trackingPos.z, moveLimit.x, moveTime.z);
-        }
-        else
-        {
-            BeforePosition.z = object3D[0].position.z;
-            moveTime.z = 0;
-            moveLimit.z = DEFAULT_MOVE_LIMIT;
-        }
+            if (object3D[0].position.z != trackingPos.z)
+            {
+                moveTime.z++;
+                object3D[0].position.z = OutQuad(BeforePosition.z, trackingPos.z, moveLimit.x, moveTime.z);
+            }
+            else
+            {
+                BeforePosition.z = object3D[0].position.z;
+                moveTime.z = 0;
+                moveLimit.z = DEFAULT_MOVE_LIMIT;
+            }
 #pragma endregion 追尾
 
+        }
         for (int i = 0; i < _countof(object3D); i++)
         {
             object3D[i].Updata(matView, matProjection);

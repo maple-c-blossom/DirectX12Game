@@ -41,7 +41,7 @@ namespace MCB
         //親オブジェクトへのポインタ
         Object3d* parent = nullptr;
 
-
+        bool trackingFlag = false;
 
 
         void Init(Dx12& dx12);
