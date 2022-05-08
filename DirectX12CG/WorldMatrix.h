@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include "View.h"
 
 namespace MCB
 {
@@ -15,6 +16,10 @@ namespace MCB
 		DirectX::XMMATRIX matRot = DirectX::XMMatrixIdentity();
 		//ïΩçsà⁄ìÆçsóÒ
 		DirectX::XMMATRIX matTransform;
+
+
+
+
 
 		/// <summary>
 		/// XâÒì]ÇÃê›íË
@@ -61,7 +66,10 @@ namespace MCB
 
 		void CreateMatrixWorld(DirectX::XMMATRIX matScale, DirectX::XMMATRIX matRot,DirectX:: XMMATRIX matTransform);
 
+		void UpdataBillBordMatrixWorld(View view);
+
 		void UpdataMatrixWorld();
+
 
 	};
 }

@@ -9,6 +9,7 @@
 #include "Dx12.h"
 #include "View.h"
 #include "Projection.h"
+#include "Vector3D.h"
 
 namespace MCB
 {
@@ -21,7 +22,7 @@ namespace MCB
             DirectX::XMMATRIX mat;
         };
         //---------------------------------
-    
+
         //行列用定数バッファ
         Microsoft::WRL::ComPtr<ID3D12Resource> constBuffTranceform = nullptr;
 
@@ -36,17 +37,20 @@ namespace MCB
         //ワールド行列
         WorldMatrix matWorld;
 
-        DirectX::XMFLOAT3 frontVec = { 0, 0, 1 };
+        Vector3D NORM_FRONT_VEC;
+        Vector3D nowFrontVec;
+        float frontAngle;
+
+        Object3d();
 
         //親オブジェクトへのポインタ
         Object3d* parent = nullptr;
 
         bool trackingFlag = false;
 
-
         void Init(Dx12& dx12);
 
-        void Updata(View& view, Projection& projection);
+        void Updata(View& view, Projection& projection, bool isBillBord = false);
 
         void Draw(Dx12 dx12, D3D12_VERTEX_BUFFER_VIEW& vbView,D3D12_INDEX_BUFFER_VIEW& ibView,UINT numIndices);
     };

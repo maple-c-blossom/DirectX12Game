@@ -85,6 +85,7 @@ void WorldMatrix::SetMatTrans(float transX, float transY, float transZ)
 	matTransform = XMMatrixTranslation(transX, transY, transZ);
 }
 
+
 void WorldMatrix::CreateMatrixWorld(XMMATRIX matScale, XMMATRIX matRot, XMMATRIX matTransform)
 {
 	this->matScale = matScale;
@@ -104,3 +105,13 @@ void WorldMatrix::UpdataMatrixWorld()
 	matWorld *= matRot;
 	matWorld *= matTransform;
 }
+
+void WorldMatrix::UpdataBillBordMatrixWorld(View view)
+{
+	matWorld = XMMatrixIdentity();
+	matWorld *= view.billMat;
+	matWorld *= matScale;
+	matWorld *= matRot;
+	matWorld *= matTransform;
+}
+

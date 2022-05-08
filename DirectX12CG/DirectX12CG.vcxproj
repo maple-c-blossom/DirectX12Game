@@ -23,6 +23,7 @@
     <ClCompile Include="Descriptor.cpp" />
     <ClCompile Include="Dx12.cpp" />
     <ClCompile Include="DxWindow.cpp" />
+    <ClCompile Include="Float.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MCBMatrix.cpp" />
@@ -35,6 +36,7 @@
     <ClCompile Include="TextureBuffer.cpp" />
     <ClCompile Include="TextureFile.cpp" />
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Vector3D.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="View.cpp" />
     <ClCompile Include="WorldMatrix.cpp" />
@@ -58,6 +60,7 @@
     <ClInclude Include="Descriptor.h" />
     <ClInclude Include="Dx12.h" />
     <ClInclude Include="DxWindow.h" />
+    <ClInclude Include="Float.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="MCBMatrix.h" />
     <ClInclude Include="MipMap.h" />
@@ -69,6 +72,7 @@
     <ClInclude Include="TextureBuffer.h" />
     <ClInclude Include="TextureFile.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Vector3D.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="View.h" />
     <ClInclude Include="WorldMatrix.h" />

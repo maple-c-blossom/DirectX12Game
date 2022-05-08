@@ -19,9 +19,6 @@
     <Filter Include="ソース ファイル\DirectX">
       <UniqueIdentifier>{afd52624-acf3-4d53-873a-09722a5cf32e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Matrix">
-      <UniqueIdentifier>{e84cb9d1-fc26-4494-9bce-75c39c9494da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Input">
       <UniqueIdentifier>{57e1e8d7-770f-447d-a971-18c7cca3cb58}</UniqueIdentifier>
     </Filter>
@@ -30,9 +27,6 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\DirectX">
       <UniqueIdentifier>{4d183000-2838-4261-b565-16af9505f69e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Matrix">
-      <UniqueIdentifier>{5101529f-3641-4876-a145-f7ee32ba12fa}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\3D">
       <UniqueIdentifier>{82d29c91-4bed-4af8-99fe-360042030ac8}</UniqueIdentifier>
@@ -52,9 +46,6 @@
     <Filter Include="ヘッダー ファイル\Texture">
       <UniqueIdentifier>{83cb4850-f526-4ed5-8554-d1dbc7d76fa1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Vertices&amp;Index">
-      <UniqueIdentifier>{3c706f9d-d6b8-4bc0-bec0-c1c8e30e3cec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Descriptor&amp;Sheader">
       <UniqueIdentifier>{e5df687b-8a73-4eef-a7f7-edd7747db1ab}</UniqueIdentifier>
     </Filter>
@@ -66,6 +57,27 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\Input">
       <UniqueIdentifier>{fcaaf576-eca5-4dc0-80d0-8cdc84857f58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Math">
+      <UniqueIdentifier>{b2488221-a3ca-4c3c-bd45-18c6adfa0ed1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Math\Matrix">
+      <UniqueIdentifier>{e84cb9d1-fc26-4494-9bce-75c39c9494da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Math\Vector">
+      <UniqueIdentifier>{23479cc5-8905-4bea-8da4-8f37b7055e3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Math">
+      <UniqueIdentifier>{ae8be9eb-5e9f-499c-a461-2979f9f27ae3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Math\Matrix">
+      <UniqueIdentifier>{5101529f-3641-4876-a145-f7ee32ba12fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Math\Vector">
+      <UniqueIdentifier>{f1476017-61e3-4b95-8347-289ef5be820e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Vertices&amp;Index">
+      <UniqueIdentifier>{3c706f9d-d6b8-4bc0-bec0-c1c8e30e3cec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,13 +97,13 @@
       <Filter>ソース ファイル\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="Projection.cpp">
-      <Filter>ソース ファイル\Matrix</Filter>
+      <Filter>ソース ファイル\Math\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="View.cpp">
-      <Filter>ソース ファイル\Matrix</Filter>
+      <Filter>ソース ファイル\Math\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="WorldMatrix.cpp">
-      <Filter>ソース ファイル\Matrix</Filter>
+      <Filter>ソース ファイル\Math\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>ソース ファイル\Input</Filter>
@@ -121,10 +133,16 @@
       <Filter>ソース ファイル\Vertices&amp;Index</Filter>
     </ClCompile>
     <ClCompile Include="MCBMatrix.cpp">
-      <Filter>ソース ファイル\Matrix</Filter>
+      <Filter>ソース ファイル\Math\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3D.cpp">
+      <Filter>ソース ファイル\Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Float.cpp">
+      <Filter>ソース ファイル\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,13 +161,13 @@
       <Filter>ヘッダー ファイル\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="Projection.h">
-      <Filter>ヘッダー ファイル\Matrix</Filter>
+      <Filter>ヘッダー ファイル\Math\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="View.h">
-      <Filter>ヘッダー ファイル\Matrix</Filter>
+      <Filter>ヘッダー ファイル\Math\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="WorldMatrix.h">
-      <Filter>ヘッダー ファイル\Matrix</Filter>
+      <Filter>ヘッダー ファイル\Math\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="Depth.h">
       <Filter>ヘッダー ファイル\3D</Filter>
@@ -185,10 +203,16 @@
       <Filter>ヘッダー ファイル\Vertices&amp;Index</Filter>
     </ClInclude>
     <ClInclude Include="MCBMatrix.h">
-      <Filter>ヘッダー ファイル\Matrix</Filter>
+      <Filter>ヘッダー ファイル\Math\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="Util.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3D.h">
+      <Filter>ヘッダー ファイル\Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Float.h">
+      <Filter>ヘッダー ファイル\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

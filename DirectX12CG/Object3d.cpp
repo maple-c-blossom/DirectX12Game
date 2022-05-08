@@ -1,6 +1,11 @@
 #include "Object3d.h"
 
 using namespace MCB;
+MCB::Object3d::Object3d()
+{
+    NORM_FRONT_VEC.vec = { 0,0,1 };
+    nowFrontVec = NORM_FRONT_VEC;
+}
 
 void Object3d::Init(Dx12& dx12)
 {
@@ -31,12 +36,26 @@ void Object3d::Init(Dx12& dx12)
     dx12.result = constBuffTranceform->Map(0, nullptr, (void**)&constMapTranceform);
 }
 
-void Object3d::Updata(View& view, Projection& projection)
+void Object3d::Updata(View& view, Projection& projection,bool isBillBord)
 {
     matWorld.SetMatScale(scale.x, scale.y, scale.z);
-    matWorld.SetMatRot(rotasion.x, rotasion.y, rotasion.z);
+    matWorld.SetMatRot(rotasion.x, rotasion.y, rotasion.z,false);
     matWorld.SetMatTrans(position.x, position.y, position.z);
-    matWorld.UpdataMatrixWorld();
+    if (isBillBord)
+    {
+        if (parent == nullptr)
+        {
+            matWorld.UpdataBillBordMatrixWorld(view);
+        }
+        else
+        {
+            matWorld.UpdataMatrixWorld();
+        }
+    }
+    else
+    {
+        matWorld.UpdataMatrixWorld();
+    }
 
     if (parent != nullptr)
     {

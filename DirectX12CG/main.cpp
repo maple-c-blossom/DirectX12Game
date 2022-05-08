@@ -104,6 +104,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
      const size_t objectNum = 50;
      Object3d object3D[objectNum];
+     Object3d object3D2[objectNum];
      for (int i = 0; i < objectNum; i++)
      {
          object3D[i].Init(dx);
@@ -115,7 +116,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
              object3D[i].rotasion = { 0.0f,0.0f,XMConvertToRadians(30.0f) };
 
-             object3D[i].position = { 0.0f,0.0f,-0.8f };
+             object3D[i].position = { 0.0f,0.0f,-3.0f };
+         }
+     }
+
+     for (int i = 0; i < objectNum; i++)
+     {
+         object3D2[i].Init(dx);
+         if (i > 0)
+         {
+             object3D2[i].parent = &object3D2[i - 1];
+
+             object3D2[i].scale = { 0.9f,0.9f,0.9f };
+
+             object3D2[i].rotasion = { 0.0f,0.0f,XMConvertToRadians(30.0f) };
+
+             object3D2[i].position = { 0.0f,0.0f,+3.0f };
          }
      }
 
@@ -578,6 +594,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
      XMFLOAT3 trackingPos = { 0,0,0 };
      XMFLOAT3 trackingDistance = { 100,100,100 };
 
+     XMFLOAT3 BeforePosition2 = { 0,0,0 };
+     XMINT3 moveLimit2 = { DEFAULT_MOVE_LIMIT,DEFAULT_MOVE_LIMIT,DEFAULT_MOVE_LIMIT };
+     XMINT3 moveTime2 = { 0,0,0 };
+     XMFLOAT3 trackingPos2 = { 0,0,0 };
+
 #pragma endregion ゲームループ用変数
      //--------------------------
      
@@ -617,8 +638,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             if (input.IsKeyDown(DIK_W)) { move.z += 1.0f; }
             else if (input.IsKeyDown(DIK_S)) { move.z -= 1.0f; }
 
-            //if (IsKeyDown(DIK_W, key)) { move.z += 1.0f; }
-            //else if (IsKeyDown(DIK_S, key)) { move.z -= 1.0f; }
+            //if (input.IsKeyDown(DIK_D)) { move.x += 1.0f; }
+            //else if (input.IsKeyDown(DIK_A)) { move.x-= 1.0f; }
 
             matView.eye.x += targetVec.x * move.z;
             matView.eye.y += targetVec.y * move.z;
@@ -636,16 +657,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         matView.UpDateMatrixView();
 
 
-        if (input.IsKeyTrigger(DIK_SPACE))
+        if (input.IsKeyTrigger(DIK_1))
         {
             object3D[0].trackingFlag = !object3D[0].trackingFlag;
         }
 
-        if (!object3D[0].trackingFlag)
+        if (input.IsKeyTrigger(DIK_2))
+        {
+            object3D2[0].trackingFlag = !object3D2[0].trackingFlag;
+        }
+
+        if (!object3D[0].trackingFlag && !object3D2[0].trackingFlag)
+        {
+            objMaterial.constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+        }
+        else if (!object3D[0].trackingFlag)
         {
             objMaterial.constMapMaterial->color = XMFLOAT4(1.0f,0.0f,0.0f,1.0f);
         }
-        else
+        else if (!object3D2[0].trackingFlag)
+        {
+            objMaterial.constMapMaterial->color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+        }
+        else if (object3D[0].trackingFlag && object3D2[0].trackingFlag)
         {
             objMaterial.constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
         }
@@ -713,12 +747,88 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 moveTime.z = 0;
                 moveLimit.z = DEFAULT_MOVE_LIMIT;
             }
+
+
+            object3D[0].position = trackingPos;
 #pragma endregion 追尾
 
         }
+
+        if (object3D2[0].trackingFlag)
+        {
+
+#pragma region 追尾中に追尾先が移動した場合の処理
+            //x軸
+            if (trackingPos2.x != matView.target.x + (targetVec.x * trackingDistance.x))
+            {
+                trackingPos2.x = matView.target.x + (targetVec.x * trackingDistance.x);//追尾先を変更
+                BeforePosition2.x = object3D2[0].position.x;//イージング用移動前座標を現在位置と同期
+                moveTime2.x = 0;//タイマーリセット
+            }
+            //y軸
+            if (trackingPos2.y != matView.target.y + (targetVec.y * trackingDistance.y))
+            {
+                trackingPos2.y = matView.target.y + (targetVec.y * trackingDistance.y);//追尾先を変更
+                BeforePosition2.y = object3D2[0].position.y;//イージング用移動前座標を現在位置と同期
+                moveTime2.y = 0;//タイマーリセット
+            }
+            //z軸
+            if (trackingPos2.z != matView.target.z + (targetVec.z * trackingDistance.z))
+            {
+                trackingPos2.z = matView.target.z + (targetVec.z * trackingDistance.z);//追尾先を変更
+                BeforePosition2.z = object3D2[0].position.z;//イージング用移動前座標を現在位置と同期
+                moveTime2.z = 0;//タイマーリセット
+            }
+#pragma endregion 追尾中に追尾先が移動した場合の処理
+
+#pragma region 追尾
+            if (object3D2[0].position.x != trackingPos2.x)
+            {
+                moveTime2.x++;
+                object3D2[0].position.x = OutQuad(BeforePosition2.x, trackingPos2.x, moveLimit2.x, moveTime2.x);
+            }
+            else
+            {
+                BeforePosition2.x = object3D2[0].position.x;
+                moveTime2.x = 0;
+                moveLimit2.x = DEFAULT_MOVE_LIMIT;
+            }
+
+            if (object3D2[0].position.y != trackingPos2.y)
+            {
+                moveTime2.y++;
+                object3D2[0].position.y = OutQuad(BeforePosition2.y, trackingPos2.y, moveLimit2.x, moveTime2.y);
+            }
+            else
+            {
+                BeforePosition2.y = object3D2[0].position.y;
+                moveTime2.y = 0;
+                moveLimit2.y = DEFAULT_MOVE_LIMIT;
+            }
+
+            if (object3D2[0].position.z != trackingPos2.z)
+            {
+                moveTime2.z++;
+                object3D2[0].position.z = OutQuad(BeforePosition2.z, trackingPos2.z, moveLimit2.x, moveTime2.z);
+            }
+            else
+            {
+                BeforePosition2.z = object3D2[0].position.z;
+                moveTime2.z = 0;
+                moveLimit2.z = DEFAULT_MOVE_LIMIT;
+            }
+#pragma endregion 追尾
+
+        }
+
         for (int i = 0; i < _countof(object3D); i++)
         {
-            object3D[i].Updata(matView, matProjection);
+            object3D[i].Updata(matView, matProjection,true);
+        }
+
+        for (int i = 0; i < _countof(object3D2); i++)
+        {
+            object3D2[i].Updata(matView, matProjection);
         }
 
 
@@ -822,6 +932,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         for (int i = 0; i < _countof(object3D); i++)
         {
             object3D[i].Draw(dx, vbView, vertex.ibView, _countof(vertex.boxIndices));
+        }
+
+        for (int i = 0; i < _countof(object3D2); i++)
+        {
+            object3D2[i].Draw(dx, vbView, vertex.ibView, _countof(vertex.boxIndices));
         }
 
         for (int i = 0; i < _countof(Rales); i++)
