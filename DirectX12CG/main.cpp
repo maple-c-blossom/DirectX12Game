@@ -748,8 +748,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 moveLimit.z = DEFAULT_MOVE_LIMIT;
             }
 
-
-            object3D[0].position = trackingPos;
 #pragma endregion ’Ç”ö
 
         }

@@ -89,3 +89,30 @@ double MCB::EaseOutBounce(double startPos, double endPos, double time, double ma
 		return n1 * (time -= 2.625 / d1) * time + 0.984375 + startPos + change;
 	}
 }
+
+int MCB::Abs(int num)
+{
+	if (num < 0)
+	{
+		return num * -1;
+	}
+	return num;
+}
+
+float MCB::Abs(float num)
+{
+	if (num < 0)
+	{
+		return num * -1;
+	}
+	return num;
+}
+
+double MCB::Abs(double num)
+{
+	if (num < 0)
+	{
+		return num * -1;
+	}
+	return num;
+}
