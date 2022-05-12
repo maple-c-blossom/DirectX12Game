@@ -714,8 +714,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region ’Ç”ö
             if (object3D[0].position.x != trackingPos.x)
             {
-                moveTime.x++;
-                object3D[0].position.x = OutQuad(BeforePosition.x, trackingPos.x, moveLimit.x, moveTime.x);
+                if (object3D[0].position.x < trackingPos.x)
+                {
+                    object3D[0].position.x += 3;
+                }
+                else
+                {
+                    object3D[0].position.x -= 3;
+                }
+
+
+                /*moveTime.x++;
+                object3D[0].position.x = OutQuad(BeforePosition.x, trackingPos.x, moveLimit.x, moveTime.x);*/
             }
             else
             {
@@ -726,8 +736,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
             if (object3D[0].position.y != trackingPos.y)
             {
-                moveTime.y++;
-                object3D[0].position.y = OutQuad(BeforePosition.y, trackingPos.y, moveLimit.x, moveTime.y);
+                if (object3D[0].position.y < trackingPos.y)
+                {
+                    object3D[0].position.y += 3;
+                }
+                else
+                {
+                    object3D[0].position.y -= 3;
+                }
+
+                /*moveTime.y++;
+                object3D[0].position.y = OutQuad(BeforePosition.y, trackingPos.y, moveLimit.x, moveTime.y);*/
             }
             else
             {
@@ -738,8 +757,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
             if (object3D[0].position.z != trackingPos.z)
             {
-                moveTime.z++;
-                object3D[0].position.z = OutQuad(BeforePosition.z, trackingPos.z, moveLimit.x, moveTime.z);
+                if (object3D[0].position.z < trackingPos.z)
+                {
+                    object3D[0].position.z += 3;
+                }
+                else
+                {
+                    object3D[0].position.z -= 3;
+                }
+                /*moveTime.z++;
+                object3D[0].position.z = OutQuad(BeforePosition.z, trackingPos.z, moveLimit.x, moveTime.z);*/
             }
             else
             {
