@@ -114,7 +114,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma region 3Dオブジェクトの生成
     Object3d* triangle = new Object3d(*dx);
     triangle->Init(*dx);
-    triangle->model.CreateModel("triangle");
+    triangle->model->CreateModel("triangle");
     triangle->scale = { 20,20,20 };
 #pragma endregion 3Dオブジェクトの生成
     //----------------------
@@ -138,7 +138,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
      //ミップマップの生成-------------------------
      MipMap* mipmap = new MipMap;
-     dx->result = mipmap->GenerateMipMap(&triangle->model.texture, TEX_FILTER_DEFAULT, 0);
+     dx->result = mipmap->GenerateMipMap(&triangle->model->texture, TEX_FILTER_DEFAULT, 0);
      //----------------------------
 
      //画像イメージデータの作成----------------------
@@ -149,13 +149,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
       //テクスチャバッファ設定---------------------------------------
       TextureBuffer texBuff;
       texBuff.SetTexHeapProp(D3D12_HEAP_TYPE_CUSTOM,D3D12_CPU_PAGE_PROPERTY_WRITE_BACK,D3D12_MEMORY_POOL_L0);
-      texBuff.SetTexResourceDesc(triangle->model.texture, D3D12_RESOURCE_DIMENSION_TEXTURE2D, 1);
+      texBuff.SetTexResourceDesc(triangle->model->texture, D3D12_RESOURCE_DIMENSION_TEXTURE2D, 1);
       //--------------------------------------
 
 
       //テクスチャバッファの生成----------------------
       dx->result = texBuff.CommitResouce(*dx, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr);
-      texBuff.TransferMipmatToTexBuff(triangle->model.texture, nullptr, dx->result);
+      texBuff.TransferMipmatToTexBuff(triangle->model->texture, nullptr, dx->result);
       //-----------------------------------
 #pragma endregion 画像関係
 
@@ -207,44 +207,44 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     
      //インデックスバッファの設定-------------------------
 #pragma region インデックスの設定
-     triangle->model.SetSizeIB();
+     triangle->model->SetSizeIB();
 
-     triangle->model.material.SetIndex(D3D12_RESOURCE_DIMENSION_BUFFER, triangle->model.sizeIB, 1, 1, 1, 1, D3D12_TEXTURE_LAYOUT_ROW_MAJOR);
+     triangle->model->material.SetIndex(D3D12_RESOURCE_DIMENSION_BUFFER, triangle->model->sizeIB, 1, 1, 1, 1, D3D12_TEXTURE_LAYOUT_ROW_MAJOR);
 
 #pragma endregion インデックスの設定
      //------------------------
 
 #pragma region インデックスバッファ生成
 
-     triangle->model.CreateIndexBuffer(*dx, triangle->model.material.HeapProp, D3D12_HEAP_FLAG_NONE, triangle->model.material.Resdesc, D3D12_RESOURCE_STATE_GENERIC_READ);
+     triangle->model->CreateIndexBuffer(*dx, triangle->model->material.HeapProp, D3D12_HEAP_FLAG_NONE, triangle->model->material.Resdesc, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 #pragma endregion インデックスバッファ生成
 
      //インデックスバッファへのデータ転送------------------------------
 #pragma region インデックスバッファへのデータ転送
 
-     dx->result = triangle->model.IndexMaping();
+     dx->result = triangle->model->IndexMaping();
 
 #pragma endregion インデックスバッファへのデータ転送
     //-------------------------------------
 
      //インデックスバッファビューの作成-----------------------------------
 #pragma region インデックスバッファビューの作成
-     triangle->model.SetIbView(DXGI_FORMAT_R16_UINT);
+     triangle->model->SetIbView(DXGI_FORMAT_R16_UINT);
 #pragma endregion インデックスバッファビューの作成
      //------------------------------------------
 
      //頂点バッファ---------------
 #pragma region 頂点バッファの設定
-     triangle->model.SetSizeVB();
-     triangle->model.material.SetVertexBuffer(D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_DIMENSION_BUFFER, triangle->model.sizeVB, 1, 1, 1, 1, D3D12_TEXTURE_LAYOUT_ROW_MAJOR);
+     triangle->model->SetSizeVB();
+     triangle->model->material.SetVertexBuffer(D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_DIMENSION_BUFFER, triangle->model->sizeVB, 1, 1, 1, 1, D3D12_TEXTURE_LAYOUT_ROW_MAJOR);
 #pragma endregion 頂点バッファの設定
      //----------------------------------
 
      // 頂点バッファの生成----------------------------
 #pragma region 頂点バッファの生成
 
-     triangle->model.CreateVertexBuffer(*dx, triangle->model.material.HeapProp, D3D12_HEAP_FLAG_NONE, triangle->model.material.Resdesc, D3D12_RESOURCE_STATE_GENERIC_READ);
+     triangle->model->CreateVertexBuffer(*dx, triangle->model->material.HeapProp, D3D12_HEAP_FLAG_NONE, triangle->model->material.Resdesc, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 #pragma endregion 頂点バッファの生成
      //-------------------------
@@ -257,13 +257,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
      // 頂点バッファへのデータ転送------------
 #pragma region 頂点バッファへのデータ転送
-     triangle->model.VertexMaping();
+     triangle->model->VertexMaping();
 #pragma endregion 頂点バッファへのデータ転送
      //--------------------------------------
 
      // 頂点バッファビューの作成--------------------------
 #pragma region 頂点バッファビューの作成
-     triangle->model.SetVbView();
+     triangle->model->SetVbView();
 #pragma endregion 頂点バッファビューの作成
      //-----------------------------------
 
@@ -280,6 +280,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma endregion 頂点シェーダの読み込みとコンパイル
     //------------------------------------------
+
+     //ジオメトリシェーダの読み込みとコンパイル---------------
+#pragma region ジオメトリシェーダの読み込みとコンパイル
+
+     shader.ShaderCompile(L"OBJGeometryShader.hlsl", "main", GS);
+
+#pragma endregion ジオメトリシェーダの読み込みとコンパイル
+     //---------------------------------
+
 
      // ピクセルシェーダの読み込みとコンパイル-------------------------------
 #pragma region ピクセルシェーダの読み込みとコンパイル
@@ -546,7 +555,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         
         //定数バッファビュー(CBV)の設定コマンド
-        dx->commandList->SetGraphicsRootConstantBufferView(0, triangle->model.material.constBuffMaterialB1->GetGPUVirtualAddress());
+        dx->commandList->SetGraphicsRootConstantBufferView(2, triangle->model->material.constBuffMaterialB1->GetGPUVirtualAddress());
 
         //SRVヒープの設定コマンド
         dx->commandList->SetDescriptorHeaps(1, descriptor.srvHeap.GetAddressOf());

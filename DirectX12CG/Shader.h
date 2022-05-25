@@ -9,11 +9,13 @@ namespace MCB
     {
         VS,
         PS,
+        GS,
     };
     class Shader
     {
     public:
         Microsoft::WRL::ComPtr<ID3DBlob> vsBlob = nullptr; // 頂点シェーダオブジェクト
+        Microsoft::WRL::ComPtr<ID3DBlob> gsBlob = nullptr; // ジオメトリシェーダオブジェクト
         Microsoft::WRL::ComPtr<ID3DBlob> psBlob = nullptr; // ピクセルシェーダオブジェクト
         Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr; // エラーオブジェクト
 

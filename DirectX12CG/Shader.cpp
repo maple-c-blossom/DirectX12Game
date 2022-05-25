@@ -33,7 +33,7 @@ void MCB::Shader::ShaderCompile(const wchar_t* shaderFileName, const char* entry
             error += "\n";
             // エラー内容を出力ウィンドウに表示
             OutputDebugStringA(error.c_str());
-            assert(0);
+            assert(0 && "VSコンパイルエラー");
         }
         break;
 
@@ -58,7 +58,31 @@ void MCB::Shader::ShaderCompile(const wchar_t* shaderFileName, const char* entry
             error += "\n";
             // エラー内容を出力ウィンドウに表示
             OutputDebugStringA(error.c_str());
-            assert(0);
+            assert(0 && "PSコンパイルエラー");
+        }
+        break;
+    case GS:
+        result = D3DCompileFromFile(
+            shaderFileName,  // シェーダファイル名
+            nullptr,
+            D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
+            entryPoint, "gs_5_0", // エントリーポイント名、シェーダーモデル指定
+            D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, // デバッグ用設定
+            0,
+            &gsBlob, &errorBlob);
+
+        if (FAILED(result)) {
+            // errorBlobからエラー内容をstring型にコピー
+            std::string error;
+            error.resize(errorBlob->GetBufferSize());
+
+            copy_n((char*)errorBlob->GetBufferPointer(),
+                errorBlob->GetBufferSize(),
+                error.begin());
+            error += "\n";
+            // エラー内容を出力ウィンドウに表示
+            OutputDebugStringA(error.c_str());
+            assert(0 && "GSコンパイルエラー");
         }
         break;
     default:

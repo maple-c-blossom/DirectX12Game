@@ -6,14 +6,15 @@ MCB::Object3d::Object3d(Dx12& dx12)
 {
     NORM_FRONT_VEC.vec = { 0,0,1 };
     nowFrontVec = NORM_FRONT_VEC;
-    model.material.Init(dx12);
+    model->material.Init(dx12);
 }
 
 MCB::Object3d::~Object3d()
 {
     //delete vertex;
     constBuffTranceform->Unmap(0, nullptr);
-    model.texture.scratchImg.Release();
+    model->texture.scratchImg.Release();
+    delete model;
 }
 
 void Object3d::Init(Dx12& dx12)
@@ -77,13 +78,13 @@ void Object3d::Updata(View& view, Projection& projection,bool isBillBord)
 void Object3d::Draw(Dx12 dx12)
 {
     //頂点データ
-    dx12.commandList->IASetVertexBuffers(0, 1, &model.vbView);
+    dx12.commandList->IASetVertexBuffers(0, 1, &model->vbView);
     //インデックスデータ
-    dx12.commandList->IASetIndexBuffer(&model.ibView);
+    dx12.commandList->IASetIndexBuffer(&model->ibView);
     //定数バッファビュー(CBV)の設定コマンド
-    dx12.commandList->SetGraphicsRootConstantBufferView(2, constBuffTranceform->GetGPUVirtualAddress());
+    dx12.commandList->SetGraphicsRootConstantBufferView(0, constBuffTranceform->GetGPUVirtualAddress());
     //描画コマンド
-    dx12.commandList->DrawIndexedInstanced((unsigned int) model.indices.size(), 1, 0, 0, 0);
+    dx12.commandList->DrawIndexedInstanced((unsigned int) model->indices.size(), 1, 0, 0, 0);
 
 }
 

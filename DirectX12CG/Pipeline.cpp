@@ -58,8 +58,12 @@ void MCB::Pipeline::SetGpipleneDescAll(Shader* shader)
 	pipelineDesc.VS.pShaderBytecode = shader->vsBlob->GetBufferPointer();
 	pipelineDesc.VS.BytecodeLength = shader->vsBlob->GetBufferSize();
 
+	pipelineDesc.GS.pShaderBytecode = shader->gsBlob->GetBufferPointer();
+	pipelineDesc.GS.BytecodeLength = shader->gsBlob->GetBufferSize();
+
 	pipelineDesc.PS.pShaderBytecode = shader->psBlob->GetBufferPointer();
 	pipelineDesc.PS.BytecodeLength = shader->psBlob->GetBufferSize();
+
 }
 
 

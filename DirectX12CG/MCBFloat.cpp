@@ -1,20 +1,21 @@
 #include "MCBFloat.h"
+using namespace MCB;
 
-Float3::Float3(float x, float y, float z)
+MCB::Float3::Float3(float x, float y, float z)
 {
 	this->x = x;
 	this->y = y;
 	this->z = z;
 }
 
-Float3::Float3()
+MCB::Float3::Float3()
 {
 	x = 0;
 	y = 0;
 	z = 0;
 }
 
-Float3& Float3::operator+=(const Float3& a)
+MCB::Float3& Float3::operator+=(const Float3& a)
 {
 	this->x += a.x;
 	this->y += a.y;
@@ -22,7 +23,7 @@ Float3& Float3::operator+=(const Float3& a)
 	return *this;
 }
 
-Float3& Float3::operator-=(const Float3& a)
+MCB::Float3& Float3::operator-=(const Float3& a)
 {
 	this->x -= a.x;
 	this->y -= a.y;
@@ -31,8 +32,7 @@ Float3& Float3::operator-=(const Float3& a)
 }
 
 
-
-Float3 operator-(Float3& a, Float3& b)
+MCB::Float3 MCB::operator-(MCB::Float3& a, MCB::Float3& b)
 {
 	Float3 temp = a;
 	temp -= b;

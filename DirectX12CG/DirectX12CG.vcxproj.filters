@@ -88,6 +88,9 @@
     <Filter Include="リソース ファイル\ShaderHeader">
       <UniqueIdentifier>{221cc362-ce73-4b12-b724-3af9f026f791}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\GeometoryShader">
+      <UniqueIdentifier>{eb50deca-a9aa-4027-b35c-5ce823a5136c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -168,13 +171,13 @@
     <ClCompile Include="RootSignature.cpp">
       <Filter>ソース ファイル\Pipeline</Filter>
     </ClCompile>
+    <ClCompile Include="Quaternion.cpp">
+      <Filter>ソース ファイル\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="BasicVS.hlsl">
-      <Filter>リソース ファイル\VertexShader</Filter>
-    </FxCompile>
-    <FxCompile Include="BasicPS.hlsl">
-      <Filter>リソース ファイル\PixelShader</Filter>
+    <FxCompile Include="OBJGeometryShader.hlsl">
+      <Filter>リソース ファイル\GeometoryShader</Filter>
     </FxCompile>
     <FxCompile Include="OBJPixelShader.hlsl">
       <Filter>リソース ファイル\PixelShader</Filter>
@@ -259,11 +262,11 @@
     <ClInclude Include="RootSignature.h">
       <Filter>ヘッダー ファイル\Pipeline</Filter>
     </ClInclude>
+    <ClInclude Include="Quaternion.h">
+      <Filter>ヘッダー ファイル\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Basic.hlsli">
-      <Filter>リソース ファイル\ShaderHeader</Filter>
-    </None>
     <None Include="OBJHeader.hlsli">
       <Filter>リソース ファイル\ShaderHeader</Filter>
     </None>
