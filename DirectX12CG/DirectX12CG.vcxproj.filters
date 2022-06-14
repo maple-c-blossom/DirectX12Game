@@ -73,9 +73,6 @@
     <Filter Include="ヘッダー ファイル\Vertices&amp;Index">
       <UniqueIdentifier>{3c706f9d-d6b8-4bc0-bec0-c1c8e30e3cec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Pipeline">
-      <UniqueIdentifier>{eb244fb2-87d3-41d2-a45a-1b6b6af2345d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Pipeline">
       <UniqueIdentifier>{c3dcf2c8-3deb-430d-9685-43005fac84c5}</UniqueIdentifier>
     </Filter>
@@ -114,6 +111,9 @@
     </Filter>
     <Filter Include="リソース ファイル\ParticleShader\VertexShader">
       <UniqueIdentifier>{47a71b20-3487-4592-bf1c-9fbd3d7a5592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Pipeline">
+      <UniqueIdentifier>{eb244fb2-87d3-41d2-a45a-1b6b6af2345d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -117,7 +117,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     Object3d* Box = new Object3d(*dx);
     Object3d* Box2 = new Object3d(*dx);
 
-    Model* BoxModel = new Model(*dx, "Box");
+    Model* BoxModel = new Model(*dx, "hoge");
 
     //Box->Init(*dx);
     //Box->model->CreateModel("Box");
@@ -126,7 +126,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     Box->model = BoxModel;
     Box2->model = BoxModel;
 
-    Box->scale = { 20,20,20 };
+    Box->scale = { 1,1,1 };
     Box2->scale = { 20,20,20 };
     //Particle particle(*dx);
     //particle.vert.material.Init(*dx);
@@ -446,7 +446,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 
         WorldMatrix mat;
-        mat.SetMatScale(20, 20, 20);
+        mat.SetMatScale(2, 2, 2);
         mat.SetMatTrans(Box->position.x , Box->position.y, Box->position.z);
         mat.matWorld = XMMatrixIdentity();
         mat.matWorld = matRot.MatrixConvertXMMatrix(q2.GetQuaternionRotaMat(q2) ) * mat.matScale;
