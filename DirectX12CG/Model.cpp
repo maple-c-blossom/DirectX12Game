@@ -1,17 +1,17 @@
 #include "Model.h"
-#
+
 
 using namespace std;
 
-MCB::Model::Model( Dx12 dx12, const std::string fileName)
+MCB::Model::Model(Dx12 dx12, const std::string fileName, ShaderResource* srv)
 {
     material.Init(dx12);
-    Init(dx12, fileName);
+    Init(dx12, fileName, srv);
 }
 
 MCB::Model::~Model()
 {
-
+    //texture.texfile.scratchImg.Release();
 }
 
 void MCB::Model::CreateVertexBuffer(Dx12& dx12, const D3D12_HEAP_PROPERTIES& HeapProp, D3D12_HEAP_FLAGS flag, const D3D12_RESOURCE_DESC Resdesc, D3D12_RESOURCE_STATES state)
@@ -90,7 +90,7 @@ HRESULT MCB::Model::VertexMaping()
 }
 
 
-void MCB::Model::CreateModel(const string fileName)
+void MCB::Model::CreateModel(Dx12 dx,const string fileName, ShaderResource* srv)
 {
     std::ifstream file;
 
@@ -159,7 +159,7 @@ void MCB::Model::CreateModel(const string fileName)
         {
             string filename;
             line_stream >> filename;
-            LoadMaterial(directoryPath, filename);
+            LoadMaterial(dx,directoryPath, filename, srv);
         }
 
         if (key == "f")
@@ -208,8 +208,7 @@ void MCB::Model::SetSizeVB()
 {
     sizeVB = static_cast<unsigned int>(sizeof(ObjectVertex) * vertices.size());
 }
-
-void MCB::Model::LoadMaterial(const std::string& directoryPath, const std::string& filename)
+void MCB::Model::LoadMaterial(Dx12 dx, const std::string& directoryPath, const std::string& filename, ShaderResource* srv)
 {
     std::ifstream file;
 
@@ -263,7 +262,7 @@ void MCB::Model::LoadMaterial(const std::string& directoryPath, const std::strin
         {
             line_stream >> material.material.textureFileName;
 
-            texture.LoadTexture(directoryPath, material.material.textureFileName);
+            texture.CreateTexture(dx, directoryPath, material.material.textureFileName,srv);
         }
 
     }
@@ -271,9 +270,9 @@ void MCB::Model::LoadMaterial(const std::string& directoryPath, const std::strin
 
 }
 
-void MCB::Model::Init(Dx12 dx, const std::string fileName)
+void MCB::Model::Init(Dx12 dx, const std::string fileName, ShaderResource* srv)
 {
-    CreateModel(fileName);
+    CreateModel(dx,fileName,srv);
 
     SetSizeIB();
     material.SetIndex(D3D12_RESOURCE_DIMENSION_BUFFER, sizeIB, 1, 1, 1, 1, D3D12_TEXTURE_LAYOUT_ROW_MAJOR);

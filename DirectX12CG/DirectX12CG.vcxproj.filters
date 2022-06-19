@@ -115,6 +115,9 @@
     <Filter Include="ソース ファイル\Pipeline">
       <UniqueIdentifier>{eb244fb2-87d3-41d2-a45a-1b6b6af2345d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\SpriteShader">
+      <UniqueIdentifier>{e3e36a56-89e5-4d0e-ba24-74e15967b994}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -204,17 +207,20 @@
     <ClCompile Include="ParticleMaterial.cpp">
       <Filter>ソース ファイル\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>ソース ファイル\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Draw.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="PIpelineRootSignature.cpp">
+      <Filter>ソース ファイル\Pipeline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="OBJGeometryShader.hlsl">
-      <Filter>リソース ファイル\BasicShader\GeometoryShader</Filter>
-    </FxCompile>
-    <FxCompile Include="OBJPixelShader.hlsl">
-      <Filter>リソース ファイル\BasicShader\PixelShader</Filter>
-    </FxCompile>
-    <FxCompile Include="OBJVertexShader.hlsl">
-      <Filter>リソース ファイル\BasicShader\VertexShader</Filter>
-    </FxCompile>
     <FxCompile Include="ParticleGeometryShader.hlsl">
       <Filter>リソース ファイル\ParticleShader\GeometoryShader</Filter>
     </FxCompile>
@@ -223,6 +229,21 @@
     </FxCompile>
     <FxCompile Include="ParticleVertexShader.hlsl">
       <Filter>リソース ファイル\ParticleShader\VertexShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\OBJShader\OBJGeometryShader.hlsl">
+      <Filter>リソース ファイル\BasicShader\GeometoryShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\OBJShader\OBJPixelShader.hlsl">
+      <Filter>リソース ファイル\BasicShader\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\OBJShader\OBJVertexShader.hlsl">
+      <Filter>リソース ファイル\BasicShader\VertexShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\SpriteShader\SpritePixelShader.hlsl">
+      <Filter>リソース ファイル\SpriteShader</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\SpriteShader\SpriteVertexShader.hlsl">
+      <Filter>リソース ファイル\SpriteShader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -310,13 +331,28 @@
     <ClInclude Include="ParticleMaterial.h">
       <Filter>ヘッダー ファイル\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>ヘッダー ファイル\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="PIpelineRootSignature.h">
+      <Filter>ヘッダー ファイル\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Draw.h">
+      <Filter>ヘッダー ファイル\DirectX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="OBJHeader.hlsli">
-      <Filter>リソース ファイル\BasicShader\ShaderHeader</Filter>
-    </None>
     <None Include="ParticleHeader.hlsli">
       <Filter>リソース ファイル\ParticleShader\ShaderHeader</Filter>
+    </None>
+    <None Include="Resources\Shaders\OBJShader\OBJHeader.hlsli">
+      <Filter>リソース ファイル\BasicShader\ShaderHeader</Filter>
+    </None>
+    <None Include="Resources\Shaders\SpriteShader\SpriteShaderHeader.hlsli">
+      <Filter>リソース ファイル\SpriteShader</Filter>
     </None>
   </ItemGroup>
 </Project>

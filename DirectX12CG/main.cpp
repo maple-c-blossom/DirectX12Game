@@ -1,6 +1,10 @@
 #define _CRTDBG_MAP_ALLOC 
-#include <cstdlib>
 #include <crtdbg.h>
+#include <cstdlib>
+
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 
 #pragma region 標準.h include
 
@@ -16,6 +20,7 @@
 #include <memory>
 #include <DirectXTex.h>
 
+
 #pragma endregion 標準.h include
 
 #pragma region 自作.h include
@@ -29,21 +34,17 @@
 #include "Depth.h"
 #include "Object3d.h"
 #include "ObjectMaterial.h"
-#include "TextureFile.h"
-#include "MipMap.h"
-#include "TexImgData.h"
-#include "TextureBuffer.h"
-#include "Descriptor.h"
 #include "RootParameter.h"
 #include "Vertex.h"
 #include "MCBMatrix.h"
 #include "Util.h"
-#include "Shader.h"
-#include "Pipeline.h"
-#include "TexSample.h"
-#include "RootSignature.h"
 #include "Particle.h"
 #include "Quaternion.h"
+#include <array>
+#include "Texture.h"
+#include "PIpelineRootSignature.h"
+#include "Draw.h"
+#include "Sprite.h"
 
 #pragma endregion 自作.h include
 
@@ -70,8 +71,9 @@ using namespace MCB;
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine,
     _In_ int nCmdShow)
 {
-    //_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    //_CrtSetBreakAlloc(434);
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    {
+    //_CrtSetBreakAlloc(1030);
 
     //int* hoge = new int(4);
     DxWindow* dxWindow = new DxWindow;
@@ -106,16 +108,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     //深度バッファ----
     Depth depth(*dxWindow, *dx);
     //-------
+    ShaderResource descriptor;
+    descriptor.Init(*dx);
 
-    ////3Dオブジェクトマテリアルの生成-------------------
-    //ObjectMaterial objMaterial;
-    //objMaterial.Init(*dx);
-    ////---------------------
+    Texture testTex;
+    testTex.CreateTexture(*dx, L"Resources\\reimu.png", &descriptor);
 
-    //3Dオブジェクトの生成-------------------
-#pragma region 3Dオブジェクトの生成
-    Object3d* Box = new Object3d(*dx);
-    Object3d* Box2 = new Object3d(*dx);
+    Draw draw;
 
     Model* BoxModel = new Model(*dx, "hoge");
 
@@ -138,231 +137,111 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
      //行列-----------------------
 #pragma region 行列
         //ビュー変換行列
-        View matView;
-        matView.CreateMatrixView(XMFLOAT3(0.0f, 0.0f, -100.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
-        //射影変換行列
-        Projection matProjection;
-         matProjection.CreateMatrixProjection(XMConvertToRadians(45.0f),(float)dxWindow->window_width / dxWindow->window_height, 0.1f, 1000.0f);
+    View matView;
+    matView.CreateMatrixView(XMFLOAT3(0.0f, 0.0f, -100.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    //射影変換行列
+    Projection matProjection;
+    matProjection.CreateMatrixProjection(XMConvertToRadians(45.0f), (float)dxWindow->window_width / dxWindow->window_height, 0.1f, 1000.0f);
 #pragma endregion 行列
-     //---------------------
-
-#pragma region 画像関係
-     //画像ファイル--------------------
-     //TextureFile* textureFile = new TextureFile;
-     //dx->result = textureFile->LoadTexture(L"Resources\\tori.png", WIC_FLAGS_NONE);
-     //----------------------------
-
-     //ミップマップの生成-------------------------
-     MipMap* mipmap = new MipMap;
-     dx->result = mipmap->GenerateMipMap(&BoxModel->texture, TEX_FILTER_DEFAULT, 0);
-     //----------------------------
-
-     //画像イメージデータの作成----------------------
-     TexImgData* imageData = new TexImgData;
-     imageData->SetImageDataRGBA(XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
-     //------------------------------------
-
-      //テクスチャバッファ設定---------------------------------------
-      TextureBuffer texBuff;
-      texBuff.SetTexHeapProp(D3D12_HEAP_TYPE_CUSTOM,D3D12_CPU_PAGE_PROPERTY_WRITE_BACK,D3D12_MEMORY_POOL_L0);
-      texBuff.SetTexResourceDesc(BoxModel->texture, D3D12_RESOURCE_DIMENSION_TEXTURE2D, 1);
-      //--------------------------------------
+    //---------------------
 
 
-      //テクスチャバッファの生成----------------------
-      dx->result = texBuff.CommitResouce(*dx, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr);
-      texBuff.TransferMipmatToTexBuff(BoxModel->texture, nullptr, dx->result);
-      //-----------------------------------
-#pragma endregion 画像関係
-
-         //デスクリプタヒープの生成-------------------------
-#pragma region デスクリプタヒープの生成
-
-     const size_t kMaxSRVCount = 2056;
-     Descriptor descriptor;
-     descriptor.SetHeapDesc(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, kMaxSRVCount);
-     dx->result = descriptor.SetDescriptorHeap(*dx);
-     descriptor.SetSrvHeap();
-
-#pragma endregion デスクリプタヒープの生成
-    //-------------------------------
-
-     //シェーダーリソースビューの作成------------------------------
-#pragma region シェーダーリソースビューの作成
-
-     descriptor.SetSrvDesc(texBuff, D3D12_SRV_DIMENSION_TEXTURE2D);
-
-     descriptor.SetShaderResourceView(*dx, texBuff);
-
-#pragma endregion シェーダーリソースビューの作成
-     //----------------------------
-
-     //デスクリプタレンジの設定--------------------------------
-#pragma region デスクリプタレンジの設定
-
-     descriptor.SetDescriptorRange(1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0);
-
-#pragma endregion デスクリプタレンジの設定
-     //-----------------------------------------
-
-     //ルートパラメータの設定---------------------------
+    //ルートパラメータの設定---------------------------
 #pragma region ルートパラメータの設定
 
-     RootParameter rootparams;
-     rootparams.SetRootParam(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_ALL,descriptor,0);
-     rootparams.SetRootParam(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, 0, 0, D3D12_SHADER_VISIBILITY_ALL,descriptor,1);
-     rootparams.SetRootParam(D3D12_ROOT_PARAMETER_TYPE_CBV, 1, 0, D3D12_SHADER_VISIBILITY_ALL, descriptor, 0);
+    RootParameter rootparams;
+    rootparams.SetRootParam(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_ALL, descriptor, 0);
+    rootparams.SetRootParam(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, 0, 0, D3D12_SHADER_VISIBILITY_ALL, descriptor, 1);
+    rootparams.SetRootParam(D3D12_ROOT_PARAMETER_TYPE_CBV, 1, 0, D3D12_SHADER_VISIBILITY_ALL, descriptor, 0);
 #pragma endregion ルートパラメータの設定
-     //------------------------
- 
+    //------------------------
 
-    //シェーダーオブジェクト宣言-------------------------------------------
-#pragma region シェーダーオブジェクト宣言
-     Shader shader;
-#pragma endregion シェーダーオブジェクト宣言
-    //---------------------------------
+    PipelineRootSignature obj3dPipeline = obj3dPipeline.Create3DObjectPipeline(*dx,depth,rootparams);
 
-    // 頂点シェーダの読み込みとコンパイル--------------------------------
-#pragma region 頂点シェーダの読み込みとコンパイル
-
-     shader.ShaderCompile(L"OBJVertexShader.hlsl", "main", VS);
-
-#pragma endregion 頂点シェーダの読み込みとコンパイル
-    //------------------------------------------
-
-     //ジオメトリシェーダの読み込みとコンパイル---------------
-#pragma region ジオメトリシェーダの読み込みとコンパイル
-
-     shader.ShaderCompile(L"OBJGeometryShader.hlsl", "main", GS);
-
-#pragma endregion ジオメトリシェーダの読み込みとコンパイル
-     //---------------------------------
-
-
-     // ピクセルシェーダの読み込みとコンパイル-------------------------------
-#pragma region ピクセルシェーダの読み込みとコンパイル
+    PipelineRootSignature spritePipeline = spritePipeline.CreateSpritePipeline(*dx, depth, rootparams);
      
-     shader.ShaderCompile(L"OBJPixelShader.hlsl", "main", PS);
+    
+        
+    //3Dオブジェクトの生成-------------------
+#pragma region 3Dオブジェクトの生成
+    //Object3d* Box = new Object3d(*dx);
+    std::array<Object3d, 20> Box;
+    std::array<Object3d, 40> Box2;
 
-#pragma endregion ピクセルシェーダの読み込みとコンパイル
-     //--------------------------------
+    Model* BoxModel = new Model(*dx, "Box", &descriptor);
 
-     Pipeline pipleline;
+    Box.begin()->model = BoxModel;
 
-     //頂点シェーダ、ピクセルシェーダをパイプラインに設定-----------------------------
-#pragma region 頂点シェーダとピクセルシェーダをパイプラインに設定
+    Box.begin()->scale = { 5,5,5 };
 
-     pipleline.SetGpipleneDescAll(&shader);
-
-#pragma endregion 頂点シェーダとピクセルシェーダをパイプラインに設定
-     //-----------------------------------
-
-     //サンプルマスクとラスタライザステートの設定------------------------------------
-#pragma region サンプルマスクとラスタライザステートの設定
-     pipleline.SetSampleMask();
-
-     pipleline.SetAllAddRasterizerState();
-#pragma endregion サンプルマスクとラスタライザステートの設定
-     //------------------------------------
+    int distance = 20;
 
 
-      //ブレンドステートの設定-------------------------------
-#pragma region ブレンドステートの設定
+    for (int i = 0; i < Box.size(); i++)
+    {
+        Box[i].Init(*dx);
+        Box[i].model = BoxModel;
+        if (i > 0)
+        {
+            Box[i].parent = &Box[i - 1];
+            Box[i].scale = { 0.9f,0.9f,0.9f };
+            Box[i].rotasion = { 0,0,0.2 };
+            Box[i].position = { 0,0,1 };
+        }
+    }
 
-     pipleline.SetRenderTaegetBlendDesc(pipleline.pipelineDesc.BlendState.RenderTarget[0]);
+    for (int i = 0; i < Box2.size(); i++)
+    {
+        Box2[i].Init(*dx);
+        Box2[i].model = BoxModel;
+        Box2[i].position.y = -10;
+        Box2[i].scale = { 5,5,5 };
+        if (i > 0)
+        {
+              Box2[i].position.z = Box2[i - 1].position.z + 20;
+        }
+    }
 
-     pipleline.SetRenderTargetWriteMask();
-
-     pipleline.SetNormalBlendDesc();
-
-     pipleline.SetAlphaBlend();
 
 
-#pragma endregion ブレンドステートの設定
-     //--------------------------
 
-     //頂点レイアウトの設定------------------
-#pragma region 頂点レイアウトの設定
+#pragma endregion 3Dオブジェクトの生成
+    //----------------------
 
-     pipleline.pipelineDesc.InputLayout.pInputElementDescs = shader.inputLayout;
-     pipleline.pipelineDesc.InputLayout.NumElements = _countof(shader.inputLayout);
 
-#pragma endregion 頂点レイアウトの設定
-     //----------------------------
 
-     //図形の形状を三角形に設定-------------------------
-     pipleline.SetPrimitiveTopologyType();
-     //------------------
 
-     //その他の設定----------------
-#pragma region その他の設定
+    Sprite sprite;
+    sprite.InitMatProje(*dxWindow);
 
-     pipleline.SetNumRenderTargets();
-     pipleline.SetRTVFormats();
-     pipleline.SetSampleDescCount();
 
-#pragma endregion その他の設定
-    //----------------
+    sprite = sprite.CreateSprite(*dx, *dxWindow);
 
-     depth.SetDepthStencilState(pipleline.pipelineDesc);
 
-   //テクスチャサンプラーの設定-----------------------
-#pragma region テクスチャサンプラーの設定
 
-     TexSample sample;
-     sample.Init();
+    float clearColor[] = { 0.0f,0.25f, 0.5f,0.0f }; // 青っぽい色
 
-#pragma endregion テクスチャサンプラーの設定
-   //----------------------------------
-
-     //ルートシグネチャの生成--------------------------
-#pragma region ルートシグネチャの生成
-
-     RootSignature rootsignature;
-
-     rootsignature.InitRootSignatureDesc(rootparams, sample);
-
-     rootsignature.SetSerializeRootSignature(shader,*dx);
-
-     rootsignature.CreateRootSignature(dx);
-
-     // パイプラインにルートシグネチャをセット
-
-     pipleline.SetRootSignature(rootsignature);
-
-#pragma endregion ルートシグネチャの生成
-     //--------------------------------
-
-    //パイプラインステートの生成-------------------------
-#pragma region パイプラインステートの生成
-
-     pipleline.CreateGraphicsPipelineState(dx);
-
-#pragma endregion パイプラインステートの生成
-     //-----------------------------
-
-     float clearColor[] = { 0.0f,0.0f, 0.0f,0.0f }; // 青っぽい色
 
 #pragma endregion
 
      //ゲームループ用変数--------------------------------
 #pragma region ゲームループ用変数
-     float angle = 0.0f;
-     const int DEFAULT_MOVE_LIMIT = 60;
 
-     XMFLOAT3 targetVec = { 0,0,1 };
-     XMFLOAT3 Angle = { 0,0,0 };
-     float angle_test = 0.0;
-     float angle_test1 = 0.99;
-     int time = 0;
-     const int MaxTime = 300;
+    XMFLOAT3 targetVec = { 0,0,1 };
+    XMFLOAT3 Angle = { 0,0,0 };
+
+
+    bool SelectVio = true;
+    int count = 0;
+
 #pragma endregion ゲームループ用変数
-     //--------------------------
-     
-     //ゲームループ-------------------------------------
+    //--------------------------
+
+    //ゲームループ-------------------------------------
 #pragma region ゲームループ
     while (true)
     {
+
         input->UpDateInit(dx->result);
 
         dxWindow->messageUpdate();
@@ -373,43 +252,33 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         }
 
 #pragma region 更新処理
+
+        if (input->IsKeyTrigger(DIK_Q))
+        {
+            SelectVio = !SelectVio;
+        }
+
+
         if (input->IsKeyDown(DIK_RIGHT) || input->IsKeyDown(DIK_LEFT) || input->IsKeyDown(DIK_UP) || input->IsKeyDown(DIK_DOWN))
         {
-
-            if (input->IsKeyDown(DIK_RIGHT)) { Angle.y += 0.05f; };
-            if (input->IsKeyDown(DIK_LEFT)) { Angle.y -= 0.05f; };
-
-            if (input->IsKeyDown(DIK_UP)) { Angle.x += 0.05f; };
-            if (input->IsKeyDown(DIK_DOWN)) { Angle.x -= 0.05f; };
-
-            targetVec.x = sinf(Angle.y);
-            targetVec.y = sinf(Angle.x);
-            targetVec.z = cosf(Angle.y + Angle.x);
-
-
-        }
-
-        if (input->IsKeyDown(DIK_D) || input->IsKeyDown(DIK_A) || input->IsKeyDown(DIK_W) || input->IsKeyDown(DIK_S))
-        {
             XMFLOAT3 move = { 0.0f,0.0f,0.0f };
-            if (input->IsKeyDown(DIK_W)) { move.z += 1.0f; }
-            else if (input->IsKeyDown(DIK_S)) { move.z -= 1.0f; }
+            if (input->IsKeyDown(DIK_RIGHT)) { move.x += 1.0f; }
+            else if (input->IsKeyDown(DIK_LEFT)) { move.x -= 1.0f; }
 
-            //if (input.IsKeyDown(DIK_D)) { move.x += 1.0f; }
-            //else if (input.IsKeyDown(DIK_A)) { move.x-= 1.0f; }
+            if (input->IsKeyDown(DIK_UP)) { move.z += 1.0f; }
+            else if (input->IsKeyDown(DIK_DOWN)) { move.z -= 1.0f; }
 
-            matView.eye.x += targetVec.x * move.z;
-            matView.eye.y += targetVec.y * move.z;
-            matView.eye.z += targetVec.z * move.z;
+            matView.eye.x += move.x;
+            matView.eye.y += move.y;
+            matView.eye.z += move.z;
 
 
-      
         }
+
 
         matView.target.x = matView.eye.x + targetVec.x;
         matView.target.y = matView.eye.y + targetVec.y;
         matView.target.z = matView.eye.z + targetVec.z;
-
 
         matView.UpDateMatrixView();
 
@@ -454,25 +323,19 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         //mat.matWorld = mat.matScale * matRot.MatrixConvertXMMatrix(q.GetQuaternionRotaMat(q));
         mat.matWorld = mat.matWorld * mat.matTransform;
 
-        Box->Updata(matView, matProjection);
+                if (input->IsKeyDown(DIK_D)) { Box[0].rotasion.y += 0.05f; };
+                if (input->IsKeyDown(DIK_A)) { Box[0].rotasion.y -= 0.05f; };
 
-        Box2->matWorld.matWorld = mat.matWorld;
-        Box2->constMapTranceform->mat = mat.matWorld * matView.mat * matProjection.mat;
-#pragma endregion 更新処理
+                Box[0].nowFrontVec.vec.x = sinf(Box[0].rotasion.y);
+                Box[0].nowFrontVec.vec.z = cosf(Box[0].rotasion.y);
 
-#pragma region 描画処理
-        //バックバッファの番号を取得（2つなので0番か1番）--------------------------
-        UINT bbIndex = dx->swapchain->GetCurrentBackBufferIndex();
-        //-----------------------------------
+                if (input->IsKeyDown(DIK_W)) { tempmove.z += 1.0f; };
+                if (input->IsKeyDown(DIK_S)) { tempmove.z -= 1.0f; };
 
-        // １．リソースバリアで書き込み可能に変更----
-#pragma region １．リソースバリアで書き込み可能に変更
+                move.x = Box[0].nowFrontVec.vec.x * tempmove.z;
+                move.y = Box[0].nowFrontVec.vec.y * tempmove.z;
+                move.z = Box[0].nowFrontVec.vec.z * tempmove.z;
 
-        D3D12_RESOURCE_BARRIER barrierDesc{};
-        barrierDesc.Transition.pResource = dx->backBuffers[bbIndex].Get(); // バックバッファを指定
-        barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT; // 表示から
-        barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
-        dx->commandList->ResourceBarrier(1, &barrierDesc);
 
 #pragma endregion 1．リソースバリアで書き込み可能に変更
         //--------------------------
@@ -496,114 +359,58 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion 3.画面クリア
         //---------------------------
 
-        //描画コマンド------------------
-#pragma region 描画コマンド
-            //ビューポートの設定コマンド-----------------------------
-#pragma region ビューポートの設定コマンド
+        }
 
-        D3D12_VIEWPORT viewport{};
 
-        viewport.Width = dxWindow->window_width;
-        viewport.Height = dxWindow->window_height;
-        viewport.TopLeftX = 0;
-        viewport.TopLeftY = 0;
-        viewport.MinDepth = 0.0f;
-        viewport.MaxDepth = 1.0f;
 
-        dx->commandList->RSSetViewports(1, &viewport);
 
-#pragma endregion ビューポートの設定コマンド
-        //------------------------------
 
-        //シザー矩形の設定コマンド-----------------
-#pragma region シザー矩形の設定コマンド
+        for (int i = 0; i < Box.size(); i++)
+        {
+            Box[i].Updata(matView, matProjection);
+        }
 
-        D3D12_RECT scissorrect{};
+        for (int i = 0; i < Box2.size(); i++)
+        {
+            Box2[i].Updata(matView, matProjection);
+        }
 
-        scissorrect.left = 0;                                       // 切り抜き座標左
-        scissorrect.right = scissorrect.left + dxWindow->window_width;        // 切り抜き座標右
-        scissorrect.top = 0;                                        // 切り抜き座標上
-        scissorrect.bottom = scissorrect.top + dxWindow->window_height;       // 切り抜き座標下
 
-        dx->commandList->RSSetScissorRects(1, &scissorrect);
+        //sprite.position = { (float)dxWindow->window_width / 2,(float)dxWindow->window_height / 2,0 };
+        //sprite.SpriteUpdate(sprite);
+        //
 
-#pragma endregion シザー矩形の設定コマンド
-        //------------------
 
-        dx->commandList->SetPipelineState(pipleline.pipelinestate.Get());
-        dx->commandList->SetGraphicsRootSignature(rootsignature.rootsignature.Get());
-        
+#pragma endregion 更新処理
 
-        //プリミティブ形状の設定コマンド（三角形リスト）--------------------------
-        dx->commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+#pragma region 描画処理
+
+        draw.PreDraw(*dx, depth, descriptor, obj3dPipeline, *dxWindow, clearColor);
 
         
-        //定数バッファビュー(CBV)の設定コマンド
-        dx->commandList->SetGraphicsRootConstantBufferView(2, BoxModel->material.constBuffMaterialB1->GetGPUVirtualAddress());
 
-        //SRVヒープの設定コマンド
-        dx->commandList->SetDescriptorHeaps(1, descriptor.srvHeap.GetAddressOf());
+        for (int i = 0; i < Box.size(); i++)
+        {
+            Box[i].Draw(*dx, descriptor);
+        }
 
-        //SRVヒープの先頭アドレスを取得
-        D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = descriptor.srvHeap->GetGPUDescriptorHandleForHeapStart();
+        for (int i = 0; i < Box2.size(); i++)
+        {
+            Box2[i].Draw(*dx, descriptor,0);
+        }
 
-        //SRVヒープの先頭にあるSRVをパラメータ1番に設定
-        dx->commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+        sprite.SpriteCommonBeginDraw(*dx, spritePipeline, descriptor);
 
-        //Box->Draw(*dx);
-        Box2->Draw(*dx);
+        sprite.SpriteDraw(sprite, *dx, descriptor, testTex, (float)dxWindow->window_width / 2, (float)dxWindow->window_height / 2);
 
 #pragma endregion 描画コマンド
         //----------------------
 
-        // ５．リソースバリアを戻す--------------
-#pragma region 5.リソースバリアを戻す
 
-        barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描画
-        barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;   // 表示に
-        dx->commandList->ResourceBarrier(1, &barrierDesc);
-
-#pragma endregion 5.リソースバリアを戻す
-        //--------------------
-
-        // 命令のクローズ-----------------------------------
-        dx->result = dx->commandList->Close();
-        assert(SUCCEEDED(dx->result) && "命令クローズ段階でのエラー");
-        //------------
-        
-
-        // コマンドリストの実行-------------------------------------
-#pragma region コマンドリスト実行
-        ID3D12CommandList* commandLists[] = { dx->commandList.Get() }; // コマンドリストの配列
-        dx->commandQueue->ExecuteCommandLists(1, commandLists);
-
-        // バッファをフリップ（裏表の入替え)-----------------------
-       dx->result =  dx->swapchain->Present(1, 0);
-       assert(SUCCEEDED(dx->result) && "バッファフリップ段階でのエラー");
-        //-----------------
-
-#pragma region コマンド実行完了待ち
-    // コマンドリストの実行完了を待つ
-        dx->commandQueue->Signal(dx->fence.Get(), ++dx->fenceVal);
-        if (dx->fence->GetCompletedValue() != dx->fenceVal)
-        {
-            HANDLE event = CreateEvent(nullptr, false, false, nullptr);
-            dx->fence->SetEventOnCompletion(dx->fenceVal, event);
-            WaitForSingleObject(event, INFINITE);
-            CloseHandle(event);
-        }
-#pragma endregion コマンド実行完了待ち
-
-        //キューをクリア
-        dx->result = dx->commandAllocator->Reset(); // キューをクリア
-        assert(SUCCEEDED(dx->result) && "キュークリア段階でのエラー");
-
-        //再びコマンドリストをためる準備
-        dx->result = dx->commandList->Reset(dx->commandAllocator.Get(), nullptr);  // 再びコマンドリストを貯める準備
-        assert(SUCCEEDED(dx->result) && "コマンドリスト再貯蓄準備段階でのエラー");
+        draw.PostDraw(*dx);
 
 #pragma endregion コマンドリスト実行
-//------------------
+        //------------------
 
 #pragma endregion 描画処理
 
@@ -614,12 +421,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     delete dxWindow;
     delete dx;
     delete input;
-    //delete textureFile;
-    delete mipmap;
-    delete imageData;
-    delete Box;
-    delete Box2;
     delete BoxModel;
-    //_CrtDumpMemoryLeaks();
+    //delete testTex;
+}
+    _CrtDumpMemoryLeaks();
+
 	return 0;
 }

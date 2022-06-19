@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 #include "MCBFloat.h"
-#include "TextureFile.h"
+#include "Texture.h"
 
 namespace MCB
 {
@@ -26,7 +26,7 @@ namespace MCB
     {
     public:
 
-        Model(Dx12 dx12, const std::string fileName);
+        Model(Dx12 dx, const std::string fileName, ShaderResource* srv);
 
         ~Model();
 
@@ -37,7 +37,7 @@ namespace MCB
 
 
 
-        TextureFile texture;
+        Texture texture;
 
         std::vector<ObjectVertex> vertices;
         std::vector<unsigned short> indices;
@@ -67,15 +67,15 @@ namespace MCB
 
         HRESULT VertexMaping();
 
-        void CreateModel(const std::string fileName);
+        void CreateModel(Dx12 dx,const std::string fileName, ShaderResource* srv);
 
         void SetSizeIB();
 
         void SetSizeVB();
 
-        void LoadMaterial( const std::string& directoryPath,const std::string& filename);
+        void LoadMaterial(Dx12 dx12, const std::string& directoryPath,const std::string& filename, ShaderResource* srv);
 
-        void Init(Dx12 dx,const std::string fileName);
+        void Init(Dx12 dx12, const std::string fileName, ShaderResource* srv);
         
     };
 

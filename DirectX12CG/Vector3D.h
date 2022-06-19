@@ -24,6 +24,8 @@ namespace MCB
 		Vector3D GetUpVec(Vector3D RightVec, Vector3D frontVec = { 0,0,1 });
 		Vector3D GetRightVec(Vector3D frontVec, Vector3D UpVec = { 0,1,0 });
 
+		Vector3D GetV3Cross(Vector3D aVector, Vector3D bVector);
+
 		Vector3D& operator+=(const Vector3D& Vec);
 		Vector3D& operator-=(const Vector3D& Vec);
 		Vector3D& operator*=(const float& k);

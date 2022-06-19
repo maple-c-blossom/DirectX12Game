@@ -2,6 +2,7 @@
 
 #include <DirectXMath.h>
 #include<vector>
+#include "MCBFloat.h"
 
 namespace MCB
 {
@@ -19,6 +20,7 @@ namespace MCB
     
        ~TexImgData();
         void SetImageDataRGBA(DirectX::XMFLOAT4 RGBA);
+        void SetImageDataRGBA(Float4 RGBA);
   
 
 	};

@@ -10,7 +10,7 @@
 #include "View.h"
 #include "Projection.h"
 #include "Vector3D.h"
-
+#include "Descriptor.h"
 #include <vector>
 #include "Model.h"
 
@@ -20,13 +20,13 @@ namespace MCB
     {
     public:
 
-
         //定数バッファ用構造体(行列)------------------------
         typedef struct ConstBufferDataTransform
         {
             DirectX::XMMATRIX mat;
         };
         //---------------------------------
+
 
         //行列用定数バッファ
         Microsoft::WRL::ComPtr<ID3D12Resource> constBuffTranceform = nullptr;
@@ -50,6 +50,7 @@ namespace MCB
 
 
         Object3d(Dx12& dx12);
+        Object3d();
 
         ~Object3d();
 
@@ -62,7 +63,9 @@ namespace MCB
 
         void Updata(View& view, Projection& projection, bool isBillBord = false);
 
-        void Draw(Dx12 dx12);
+        void Draw(Dx12 dx12, ShaderResource descriptor);
+
+        void Draw(Dx12 dx12, ShaderResource descriptor,unsigned short int incremant);
 
         //void CreateModel(const char* fileName);
     };

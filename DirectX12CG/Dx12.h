@@ -89,6 +89,7 @@ namespace MCB
         void SetBackBuffer();
 
         void SetFence();
+
     };
 
 }

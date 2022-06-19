@@ -36,6 +36,7 @@ namespace MCB
 		void InitDepthStencilView(Dx12& dx12);
 
 		void SetDepthStencilState(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipelineDesc);
+		void SetSpriteDepthStencilState(D3D12_GRAPHICS_PIPELINE_STATE_DESC& pipelineDesc);
 	};
 }
 

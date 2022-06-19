@@ -1,5 +1,5 @@
 #pragma once
-
+#include <DirectXMath.h>
 
 
 namespace MCB
@@ -28,10 +28,13 @@ namespace MCB
 	class Float4
 	{
 	public:
-		float x;
-		float y;
-		float z;
-		float w;
+		float x = 0;
+		float y = 0;
+		float z = 0;
+		float w = 0;
+
+		Float4();
+		Float4(float x, float y, float z, float w);
 	};
 
 	MCB::Float3 operator-(MCB::Float3& a, MCB::Float3& b);

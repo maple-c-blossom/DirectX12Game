@@ -45,7 +45,7 @@ DxWindow::DxWindow()
 
     window.cbSize = sizeof(WNDCLASSEX);
     window.lpfnWndProc = (WNDPROC)WindowProc; // ウィンドウプロシージャを設定
-    window.lpszClassName = L"DirectXGame"; // ウィンドウクラス名
+    window.lpszClassName = windowName; // ウィンドウクラス名
     window.hInstance = GetModuleHandle(nullptr); // ウィンドウハンドル
     window.hCursor = LoadCursor(NULL, IDC_ARROW); // カーソル指定
 
@@ -57,7 +57,7 @@ DxWindow::DxWindow()
 
     // ウィンドウオブジェクトの生成
     hwnd = CreateWindow(window.lpszClassName, // クラス名
-        L"DirectX12Game",         // タイトルバーの文字
+        windowName,         // タイトルバーの文字
         WS_OVERLAPPEDWINDOW,        // 標準的なウィンドウスタイル
         CW_USEDEFAULT,              // 表示X座標（OSに任せる）
         CW_USEDEFAULT,              // 表示Y座標（OSに任せる）

@@ -24,6 +24,13 @@ void MCB::Pipeline::SetAllAddRasterizerState()
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 }
 
+void MCB::Pipeline::SetSpriteAllAddRasterizerState()
+{
+	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;  // 背面カリング
+	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
+	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
+}
+
 void MCB::Pipeline::SetGpipleneDesc(D3D12_SHADER_BYTECODE &byteCode, ID3DBlob* blob)
 {
 	byteCode.pShaderBytecode = blob->GetBufferPointer();
@@ -41,6 +48,7 @@ void MCB::Pipeline::SetGpipleneDescVS(ID3DBlob* blob)
 void MCB::Pipeline::SetGpipleneDescPS(ID3DBlob* blob)
 {
 	pipelineDesc.PS.pShaderBytecode = blob->GetBufferPointer();
+	pipelineDesc.PS.BytecodeLength = blob->GetBufferSize();
 	pipelineDesc.PS.BytecodeLength = blob->GetBufferSize();
 }
 
@@ -60,6 +68,16 @@ void MCB::Pipeline::SetGpipleneDescAll(Shader* shader)
 
 	pipelineDesc.GS.pShaderBytecode = shader->gsBlob->GetBufferPointer();
 	pipelineDesc.GS.BytecodeLength = shader->gsBlob->GetBufferSize();
+
+	pipelineDesc.PS.pShaderBytecode = shader->psBlob->GetBufferPointer();
+	pipelineDesc.PS.BytecodeLength = shader->psBlob->GetBufferSize();
+
+}
+
+void MCB::Pipeline::SetSpriteGpipleneDescAll(Shader* shader)
+{
+	pipelineDesc.VS.pShaderBytecode = shader->vsBlob->GetBufferPointer();
+	pipelineDesc.VS.BytecodeLength = shader->vsBlob->GetBufferSize();
 
 	pipelineDesc.PS.pShaderBytecode = shader->psBlob->GetBufferPointer();
 	pipelineDesc.PS.BytecodeLength = shader->psBlob->GetBufferSize();

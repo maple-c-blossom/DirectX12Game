@@ -22,6 +22,8 @@ namespace MCB
 
 		void SetAllAddRasterizerState();
 
+		void SetSpriteAllAddRasterizerState();
+
 		void SetGpipleneDesc(D3D12_SHADER_BYTECODE &byteCode,ID3DBlob* blob);
 
 		void SetGpipleneDescVS(ID3DBlob* blob);
@@ -31,6 +33,8 @@ namespace MCB
 		void SetGpipleneDescAll(ID3DBlob* VS, ID3DBlob* PS);
 
 		void SetGpipleneDescAll(Shader* shader);
+
+		void SetSpriteGpipleneDescAll(Shader* shader);
 
 		void SetRenderTaegetBlendDesc(D3D12_RENDER_TARGET_BLEND_DESC renderTarget);
 

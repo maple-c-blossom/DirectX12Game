@@ -196,4 +196,3 @@ void Dx12::SetFence()
 #pragma endregion ƒtƒFƒ“ƒX‚Ì¶¬
     //------------
 }
-
