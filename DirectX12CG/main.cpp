@@ -116,21 +116,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     Draw draw;
 
-    Model* BoxModel = new Model(*dx, "hoge");
-
-    //Box->Init(*dx);
-    //Box->model->CreateModel("Box");
-    //BoxModel->Init(*dx, "Box");
-
-    Box->model = BoxModel;
-    Box2->model = BoxModel;
-
-    Box->scale = { 1,1,1 };
-    Box2->scale = { 20,20,20 };
-    //Particle particle(*dx);
-    //particle.vert.material.Init(*dx);
-    //particle.Init(*dx);
-
 #pragma endregion 3Dオブジェクトの生成
     //----------------------
 
@@ -169,10 +154,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     std::array<Object3d, 40> Box2;
 
     Model* BoxModel = new Model(*dx, "Box", &descriptor);
-
-    Box.begin()->model = BoxModel;
-
-    Box.begin()->scale = { 5,5,5 };
 
     int distance = 20;
 
@@ -230,7 +211,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     XMFLOAT3 targetVec = { 0,0,1 };
     XMFLOAT3 Angle = { 0,0,0 };
 
+    float angle;
+    float angle_test;
+    float angle_test1;
 
+    int time;
+    const int MaxTime = 180;
     bool SelectVio = true;
     int count = 0;
 
@@ -293,7 +279,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         Quaternion q2;
         Vector3D vec{ 1,0,0 };
         Vector3D vec1{ 0,1,1 };
-        Box->rotasion = { angle_test,0,0 };
+        Box.begin()->rotasion = {angle_test,0,0};
         q.SetRota(vec, angle_test);
         q1.SetRota(vec1, angle_test1);
 
@@ -316,51 +302,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         WorldMatrix mat;
         mat.SetMatScale(2, 2, 2);
-        mat.SetMatTrans(Box->position.x , Box->position.y, Box->position.z);
+        mat.SetMatTrans(Box.begin()->position.x , Box.begin()->position.y, Box.begin()->position.z);
         mat.matWorld = XMMatrixIdentity();
         mat.matWorld = matRot.MatrixConvertXMMatrix(q2.GetQuaternionRotaMat(q2) ) * mat.matScale;
 /*        mat.matWorld = mat.matWorld * matRot.MatrixConvertXMMatrix(q.GetQuaternionRotaMat(q.GetReciprocal(q)))*/;
         //mat.matWorld = mat.matScale * matRot.MatrixConvertXMMatrix(q.GetQuaternionRotaMat(q));
-        mat.matWorld = mat.matWorld * mat.matTransform;
+mat.matWorld = mat.matWorld * mat.matTransform;
 
-                if (input->IsKeyDown(DIK_D)) { Box[0].rotasion.y += 0.05f; };
-                if (input->IsKeyDown(DIK_A)) { Box[0].rotasion.y -= 0.05f; };
-
-                Box[0].nowFrontVec.vec.x = sinf(Box[0].rotasion.y);
-                Box[0].nowFrontVec.vec.z = cosf(Box[0].rotasion.y);
-
-                if (input->IsKeyDown(DIK_W)) { tempmove.z += 1.0f; };
-                if (input->IsKeyDown(DIK_S)) { tempmove.z -= 1.0f; };
-
-                move.x = Box[0].nowFrontVec.vec.x * tempmove.z;
-                move.y = Box[0].nowFrontVec.vec.y * tempmove.z;
-                move.z = Box[0].nowFrontVec.vec.z * tempmove.z;
-
-
-#pragma endregion 1．リソースバリアで書き込み可能に変更
-        //--------------------------
-
-        // ２．描画先指定----------------
-#pragma region ２．描画先指定
-
-// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dx->rtvHeaps->GetCPUDescriptorHandleForHeapStart();
-        rtvHandle.ptr += bbIndex * dx->device->GetDescriptorHandleIncrementSize(dx->rtvHeapDesc.Type);
-        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = depth.dsvHeap->GetCPUDescriptorHandleForHeapStart();
-        dx->commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-
-#pragma endregion 2．描画先指定
-        //-------------------
-        
-        //３．画面クリア-------------
-#pragma region 3.画面クリア
-        dx->commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-        dx->commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-#pragma endregion 3.画面クリア
-        //---------------------------
-
-        }
-
+       
 
 
 
