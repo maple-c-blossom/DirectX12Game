@@ -70,16 +70,6 @@ Vector3D MCB::Vector3D::GetV3Cross(Vector3D avector, Vector3D bvector)
 	return temp;
 }
 
-
-Vector3D MCB::Vector3D::GetV3Cross(Vector3D aVector, Vector3D bVector)
-{
-	Vector3D temp;
-	temp.vec.x = aVector.vec.y * bVector.vec.z - aVector.vec.z * bVector.vec.y;
-	temp.vec.y = aVector.vec.z * bVector.vec.x - aVector.vec.x * bVector.vec.z;
-	temp.vec.z = aVector.vec.x * bVector.vec.y - aVector.vec.y * bVector.vec.x;
-	return temp;
-}
-
 Vector3D MCB::Vector3D::GetUpVec(Vector3D RightVec, Vector3D frontVec)
 {
 	Vector3D ans;
@@ -90,6 +80,7 @@ Vector3D MCB::Vector3D::GetUpVec(Vector3D RightVec, Vector3D frontVec)
 
 	return ans;
 }
+
 
 Vector3D MCB::Vector3D::GetRightVec(Vector3D frontVec, Vector3D UpVec)
 {

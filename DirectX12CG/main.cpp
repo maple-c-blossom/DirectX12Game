@@ -116,8 +116,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     Draw draw;
 
-#pragma endregion 3Dオブジェクトの生成
-    //----------------------
 
      //行列-----------------------
 #pragma region 行列
@@ -154,6 +152,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     std::array<Object3d, 40> Box2;
 
     Model* BoxModel = new Model(*dx, "Box", &descriptor);
+
+    Box.begin()->model = BoxModel;
+
+    Box.begin()->scale = { 5,5,5 };
 
     int distance = 20;
 
@@ -211,12 +213,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     XMFLOAT3 targetVec = { 0,0,1 };
     XMFLOAT3 Angle = { 0,0,0 };
 
-    float angle;
-    float angle_test;
-    float angle_test1;
 
-    int time;
-    const int MaxTime = 180;
     bool SelectVio = true;
     int count = 0;
 
@@ -268,48 +265,56 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         matView.UpDateMatrixView();
 
-        //angle_test += 0.001f;
-
-        XMMATRIX matrot = XMMatrixIdentity();
-        matrot = XMMatrixRotationX(600.0f);
-        MCBMatrix matRot;
-        MCBMatrix matRot2;
-        Quaternion q;
-        Quaternion q1;
-        Quaternion q2;
-        Vector3D vec{ 1,0,0 };
-        Vector3D vec1{ 0,1,1 };
-        Box.begin()->rotasion = {angle_test,0,0};
-        q.SetRota(vec, angle_test);
-        q1.SetRota(vec1, angle_test1);
-
-        if (time < MaxTime)
+        if (input->IsKeyDown(DIK_D) || input->IsKeyDown(DIK_A) || input->IsKeyDown(DIK_W) || input->IsKeyDown(DIK_S))
         {
-            time++;
+            Float3 tempmove = { 0,0,0 };
+            Float3 move = { 0,0,0 };
+            if (SelectVio)
+            {
+
+                if (input->IsKeyDown(DIK_D)) { Box[0].rotasion.y += 0.05f; };
+                if (input->IsKeyDown(DIK_A)) { Box[0].rotasion.y -= 0.05f; };
+
+                Box[0].nowFrontVec.vec.x = sinf(Box[0].rotasion.y);
+                Box[0].nowFrontVec.vec.z = cosf(Box[0].rotasion.y);
+
+                if (input->IsKeyDown(DIK_W)) { tempmove.z += 1.0f; };
+                if (input->IsKeyDown(DIK_S)) { tempmove.z -= 1.0f; };
+
+                move.x = Box[0].nowFrontVec.vec.x * tempmove.z;
+                move.y = Box[0].nowFrontVec.vec.y * tempmove.z;
+                move.z = Box[0].nowFrontVec.vec.z * tempmove.z;
+
+
+                Box[0].position.x += move.x;
+                Box[0].position.y += move.y;
+                Box[0].position.z += move.z;
+            }
+            else
+            {
+                Vector3D camerafrontVec = { matView.target.x - matView.eye.x , matView.target.y - matView.eye.y ,matView.target.z - matView.eye.z };
+                camerafrontVec.V3Norm();
+                Vector3D cameraRightVec;
+                cameraRightVec = cameraRightVec.GetV3Cross(Vector3D{ 0,1,0 }, camerafrontVec);
+                cameraRightVec.V3Norm();
+
+                if (input->IsKeyDown(DIK_D)) { tempmove.x += 1.0f; };
+                if (input->IsKeyDown(DIK_A)) { tempmove.x -= 1.0f; };
+                if (input->IsKeyDown(DIK_W)) { tempmove.z += 1.0f; };
+                if (input->IsKeyDown(DIK_S)) { tempmove.z -= 1.0f; };
+
+                move.x = cameraRightVec.vec.x * tempmove.x + camerafrontVec.vec.x * tempmove.x;
+                move.y = cameraRightVec.vec.y * tempmove.y + camerafrontVec.vec.y * tempmove.y;
+                move.z = cameraRightVec.vec.z * tempmove.z + camerafrontVec.vec.z * tempmove.z;
+
+                Box[0].position.x += move.x;
+                Box[0].position.y += move.y;
+                Box[0].position.z += move.z;
+
+            }
+
         }
 
-        q2 = q2.Slerp(q, q1, time, MaxTime);
-
-        //q = q.SetRotationQuaternion(vec, position, 0.5f);
-        matRot = q2.GetQuaternionRotaMat(q2);
-
-        //Vector3D vec1;
-        //vec1.vec.x = matRot._21;
-        //vec1.vec.y = matRot._22;
-        //vec1.vec.z = matRot._23;
-        //float len = vec1.V3Len();
-
-
-        WorldMatrix mat;
-        mat.SetMatScale(2, 2, 2);
-        mat.SetMatTrans(Box.begin()->position.x , Box.begin()->position.y, Box.begin()->position.z);
-        mat.matWorld = XMMatrixIdentity();
-        mat.matWorld = matRot.MatrixConvertXMMatrix(q2.GetQuaternionRotaMat(q2) ) * mat.matScale;
-/*        mat.matWorld = mat.matWorld * matRot.MatrixConvertXMMatrix(q.GetQuaternionRotaMat(q.GetReciprocal(q)))*/;
-        //mat.matWorld = mat.matScale * matRot.MatrixConvertXMMatrix(q.GetQuaternionRotaMat(q));
-mat.matWorld = mat.matWorld * mat.matTransform;
-
-       
 
 
 
