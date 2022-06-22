@@ -13,6 +13,7 @@
 #include "Descriptor.h"
 #include <vector>
 #include "Model.h"
+#include "Quaternion.h"
 
 namespace MCB
 {
@@ -62,6 +63,8 @@ namespace MCB
         void Init(Dx12& dx12);
 
         void Updata(View& view, Projection& projection, bool isBillBord = false);
+
+        void Updata(View& view, Projection& projection, Quaternion q, bool isBillBord = false);
 
         void Draw(Dx12 dx12, ShaderResource descriptor);
 
