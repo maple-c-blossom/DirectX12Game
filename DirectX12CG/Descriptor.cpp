@@ -1,5 +1,7 @@
 #include "Descriptor.h"
 
+unsigned short int MCB::ShaderResource::AllincrementNum = 0;
+
 void MCB::ShaderResource::Init(Dx12 dx)
 {
     SetHeapDesc(D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
@@ -51,4 +53,9 @@ void MCB::ShaderResource::SetSrvHeap(unsigned short int incrementNum, Dx12 dx12)
 {
     srvHandle = srvHeap->GetCPUDescriptorHandleForHeapStart();
     srvHandle.ptr += incrementNum * dx12.device.Get()->GetDescriptorHandleIncrementSize(srvHeapDesc.Type);
+}
+
+void MCB::ShaderResource::InitAllincrementNum()
+{
+    ShaderResource::AllincrementNum = 0;
 }

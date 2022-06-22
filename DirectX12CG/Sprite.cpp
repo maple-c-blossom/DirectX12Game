@@ -5,7 +5,7 @@ using namespace DirectX;
 
 DirectX::XMMATRIX Sprite::matProje{};
 
-void MCB::Sprite::SpriteTransferVertexBuffer(const Sprite& sprite)
+void MCB::Sprite::SpriteTransferVertexBuffer(const Sprite& sprite,Texture* tex)
 {
     HRESULT result = S_FALSE;
 
@@ -25,11 +25,40 @@ void MCB::Sprite::SpriteTransferVertexBuffer(const Sprite& sprite)
 
     enum { LB, LT, RB, RT };
 
+    if (sprite.isFlipX)
+    {
+        left = -left;
+        right = -right;
+    }
+
+    if (sprite.isFlipY)
+    {
+        top = -top;
+        bottom = -bottom;
+    }
+
     vertices[LB].pos = { left,bottom,0.0f };
     vertices[LT].pos = { left,top,0.0f };
     vertices[RB].pos = { right,bottom,0.0f };
     vertices[RT].pos = { right,top,0.0f };
 
+    if (tex != nullptr)
+    {
+        D3D12_RESOURCE_DESC resDesc = tex->texBuff.texbuff->GetDesc();
+
+        float tex_left = sprite.texLeftTop.x / resDesc.Width;
+        float tex_right = (sprite.texLeftTop.x + sprite.cuttingSize.x) / resDesc.Width;
+        float tex_top = sprite.texLeftTop.y / resDesc.Height;
+        float tex_bottom = (sprite.texLeftTop.y + sprite.cuttingSize.y) / resDesc.Height;
+
+        vertices[LB].uv = { tex_left,tex_bottom };
+        vertices[LT].uv = { tex_left,tex_top };
+        vertices[RB].uv = { tex_right,tex_bottom };
+        vertices[RT].uv = { tex_right,tex_top };
+
+    }
+
+    
 
     SpriteVertex* vertexMap = nullptr;
     result = sprite.vertBuff->Map(0, nullptr, (void**)&vertexMap);
@@ -240,12 +269,25 @@ void MCB::Sprite::SpriteDraw(Sprite& sprite, Dx12& dx12, ShaderResource descript
 
 }
 
-void MCB::Sprite::SpriteFlipDraw(Sprite& sprite, Dx12& dx12, ShaderResource descriptor, Texture& tex, bool isflipX, bool isflipY)
+void MCB::Sprite::SpriteFlipDraw(Sprite& sprite, Dx12& dx12, ShaderResource descriptor, Texture& tex, float positionX, float positionY, bool isflipX, bool isflipY)
 {
     Sprite tempSprite = sprite;
 
+    tempSprite.position.x = positionX;
+    tempSprite.position.y = positionY;
+    tempSprite.position.z = 0;
+
+    tempSprite.SpriteUpdate(tempSprite);
+
     tempSprite.isFlipX = isflipX;
     tempSprite.isFlipY = isflipY;
+
+    D3D12_RESOURCE_DESC resdesc = tex.texBuff.texbuff->GetDesc();
+
+    tempSprite.size.x = (float)resdesc.Width;
+    tempSprite.size.y = (float)resdesc.Height;
+
+    tempSprite.SpriteTransferVertexBuffer(tempSprite);
 
     //SRVヒープの先頭アドレスを取得
     D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = descriptor.srvHeap->GetGPUDescriptorHandleForHeapStart();
@@ -263,4 +305,34 @@ void MCB::Sprite::SpriteFlipDraw(Sprite& sprite, Dx12& dx12, ShaderResource desc
     //描画コマンド
     dx12.commandList->DrawInstanced(4, 1, 0, 0);
 
+}
+
+void MCB::Sprite::SpriteCuttingDraw(Sprite& sprite, Dx12& dx12, ShaderResource descriptor, Texture& tex, float positionX, float positionY, Float2 cuttingsize, Float2 CuttingLeftTop)
+{
+    Sprite tempSprite = sprite;
+
+    tempSprite.position.x = positionX;
+    tempSprite.position.y = positionY;
+    tempSprite.position.z = 0;
+    tempSprite.texLeftTop = CuttingLeftTop;
+    tempSprite.cuttingSize = cuttingsize;
+
+    tempSprite.SpriteUpdate(tempSprite);
+    tempSprite.SpriteTransferVertexBuffer(tempSprite,&tex);
+
+    //SRVヒープの先頭アドレスを取得
+    D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = descriptor.srvHeap->GetGPUDescriptorHandleForHeapStart();
+
+
+    srvGpuHandle.ptr += tex.incrementNum * dx12.device.Get()->GetDescriptorHandleIncrementSize(descriptor.srvHeapDesc.Type);
+
+    //SRVヒープの先頭にあるSRVをパラメータ1番に設定
+    dx12.commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+
+    //頂点データ
+    dx12.commandList->IASetVertexBuffers(0, 1, &vbView);
+    //定数バッファビュー(CBV)の設定コマンド
+    dx12.commandList->SetGraphicsRootConstantBufferView(0, sprite.constBuff->GetGPUVirtualAddress());
+    //描画コマンド
+    dx12.commandList->DrawInstanced(4, 1, 0, 0);
 }

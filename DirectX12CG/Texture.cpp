@@ -5,7 +5,7 @@
 using namespace MCB;
 using namespace DirectX;
 
-unsigned short int Texture::AllincrementNum = 0;
+
 
 MCB::Texture::~Texture()
 {
@@ -45,10 +45,7 @@ void MCB::Texture::CreateTexture(Dx12 dx12, const wchar_t* FileName, unsigned sh
     SetSrvHeap(dx12);
 }
 
-void MCB::Texture::InitAllincrementNum()
-{
-    Texture::AllincrementNum = 0;
-}
+
 
 void MCB::Texture::CreateTexture(Dx12 dx12, const std::string& directoryPath, const std::string& filename, unsigned short int incrementNum, ShaderResource* srv)
 {
@@ -123,9 +120,9 @@ void MCB::Texture::CreateTexture(Dx12 dx12, const wchar_t* FileName, ShaderResou
     result = texBuff.CommitResouce(dx12, D3D12_HEAP_FLAG_NONE, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr);
     texBuff.TransferMipmatToTexBuff(texfile, nullptr, result);
     //-----------------------------------
-    this->incrementNum = Texture::AllincrementNum;
+    this->incrementNum = ShaderResource::AllincrementNum;
 
-    Texture::AllincrementNum++;
+    ShaderResource::AllincrementNum++;
     srvptr = srv;
 
     SetSrvHeap(dx12);
@@ -157,9 +154,9 @@ void MCB::Texture::CreateTexture(Dx12 dx12, const std::string& directoryPath, co
     texBuff.TransferMipmatToTexBuff(texfile, nullptr, result);
     //-----------------------------------
 
-    this->incrementNum = Texture::AllincrementNum;
+    this->incrementNum = ShaderResource::AllincrementNum;
 
-    Texture::AllincrementNum++;
+    ShaderResource::AllincrementNum++;
     srvptr = srv;
 
     SetSrvHeap(dx12);

@@ -45,6 +45,8 @@
 #include "PIpelineRootSignature.h"
 #include "Draw.h"
 #include "Sprite.h"
+#include "DebugText.h"
+#include "Sound.h"
 
 #pragma endregion 自作.h include
 
@@ -100,6 +102,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     //inputクラス生成
     Input* input = new Input(dx->result, dxWindow->window, dxWindow->hwnd);
 
+
 #pragma endregion 
 
 
@@ -111,9 +114,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     ShaderResource descriptor;
     descriptor.Init(*dx);
 
-    Texture testTex;
-    testTex.CreateTexture(*dx, L"Resources\\reimu.png", &descriptor);
-
     Draw draw;
 
 
@@ -124,7 +124,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     matView.CreateMatrixView(XMFLOAT3(0.0f, 0.0f, -100.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
     //射影変換行列
     Projection matProjection;
-    matProjection.CreateMatrixProjection(XMConvertToRadians(45.0f), (float)dxWindow->window_width / dxWindow->window_height, 0.1f, 1000.0f);
+    matProjection.CreateMatrixProjection(XMConvertToRadians(45.0f), (float)dxWindow->window_width / dxWindow->window_height, 0.1f, 4000.0f);
 #pragma endregion 行列
     //---------------------
 
@@ -143,21 +143,45 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     PipelineRootSignature spritePipeline = spritePipeline.CreateSpritePipeline(*dx, depth, rootparams);
      
+
+
+    //テクスチャ読み込み
+    Texture testTex;
+    testTex.CreateTexture(*dx, L"Resources\\reimu.png", &descriptor);
+    Texture debugTextTexture;
+    debugTextTexture.CreateTexture(*dx, L"Resources\\debugfont.png", &descriptor);
+
+    //3Dモデル読み込み
+    Model* BoxModel = new Model(*dx, "Box", &descriptor);
     
-        
+    Model* groundModel = new Model(*dx, "ground", &descriptor);
+
+    Model* skydomeModel = new Model(*dx, "skydome", &descriptor);
+
+
+
     //3Dオブジェクトの生成-------------------
 #pragma region 3Dオブジェクトの生成
     //Object3d* Box = new Object3d(*dx);
     std::array<Object3d, 20> Box;
     std::array<Object3d, 40> Box2;
 
-    Model* BoxModel = new Model(*dx, "Box", &descriptor);
+    Object3d ground;
+    ground.Init(*dx);
+    ground.model = groundModel;
+    ground.scale = { 4,4,4 };
+    ground.position = { 0,-15,0 };
+
+    Object3d Skydorm;
+    Skydorm.Init(*dx);
+    Skydorm.model = skydomeModel;
+    Skydorm.scale = { 4,4,4 };
+
 
     Box.begin()->model = BoxModel;
 
     Box.begin()->scale = { 5,5,5 };
 
-    int distance = 20;
 
 
     for (int i = 0; i < Box.size(); i++)
@@ -191,21 +215,30 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma endregion 3Dオブジェクトの生成
     //----------------------
 
-
-
-
+    //スプライトの生成---------------
     Sprite sprite;
     sprite.InitMatProje(*dxWindow);
-
-
     sprite = sprite.CreateSprite(*dx, *dxWindow);
 
 
+    DebugText debugText;
+    debugText.Init(*dx, *dxWindow,&debugTextTexture);
+
+    //-----------------------
 
     float clearColor[] = { 0.0f,0.25f, 0.5f,0.0f }; // 青っぽい色
 
 
 #pragma endregion
+
+#pragma region サウンド
+    //サウンド初期化
+    SoundManager soundManager;
+    //サウンド系読み込み
+    int testSound = soundManager.LoadWaveSound("Resources\\cat1.wav");
+
+    //soundManager.PlaySoundWave(testSound);
+#pragma endregion サウンド
 
      //ゲームループ用変数--------------------------------
 #pragma region ゲームループ用変数
@@ -217,6 +250,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     bool SelectVio = true;
     int count = 0;
 
+    int distance = 20;
 #pragma endregion ゲームループ用変数
     //--------------------------
 
@@ -236,27 +270,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma region 更新処理
 
-        if (input->IsKeyTrigger(DIK_Q))
-        {
-            SelectVio = !SelectVio;
-        }
-
-
-        if (input->IsKeyDown(DIK_RIGHT) || input->IsKeyDown(DIK_LEFT) || input->IsKeyDown(DIK_UP) || input->IsKeyDown(DIK_DOWN))
-        {
-            XMFLOAT3 move = { 0.0f,0.0f,0.0f };
-            if (input->IsKeyDown(DIK_RIGHT)) { move.x += 1.0f; }
-            else if (input->IsKeyDown(DIK_LEFT)) { move.x -= 1.0f; }
-
-            if (input->IsKeyDown(DIK_UP)) { move.z += 1.0f; }
-            else if (input->IsKeyDown(DIK_DOWN)) { move.z -= 1.0f; }
-
-            matView.eye.x += move.x;
-            matView.eye.y += move.y;
-            matView.eye.z += move.z;
-
-
-        }
 
 
         matView.target.x = matView.eye.x + targetVec.x;
@@ -265,61 +278,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         matView.UpDateMatrixView();
 
-        if (input->IsKeyDown(DIK_D) || input->IsKeyDown(DIK_A) || input->IsKeyDown(DIK_W) || input->IsKeyDown(DIK_S))
-        {
-            Float3 tempmove = { 0,0,0 };
-            Float3 move = { 0,0,0 };
-            if (SelectVio)
-            {
 
-                if (input->IsKeyDown(DIK_D)) { Box[0].rotasion.y += 0.05f; };
-                if (input->IsKeyDown(DIK_A)) { Box[0].rotasion.y -= 0.05f; };
-
-                Box[0].nowFrontVec.vec.x = sinf(Box[0].rotasion.y);
-                Box[0].nowFrontVec.vec.z = cosf(Box[0].rotasion.y);
-
-                if (input->IsKeyDown(DIK_W)) { tempmove.z += 1.0f; };
-                if (input->IsKeyDown(DIK_S)) { tempmove.z -= 1.0f; };
-
-                move.x = Box[0].nowFrontVec.vec.x * tempmove.z;
-                move.y = Box[0].nowFrontVec.vec.y * tempmove.z;
-                move.z = Box[0].nowFrontVec.vec.z * tempmove.z;
-
-
-                Box[0].position.x += move.x;
-                Box[0].position.y += move.y;
-                Box[0].position.z += move.z;
-            }
-            else
-            {
-                Vector3D camerafrontVec = { matView.target.x - matView.eye.x , matView.target.y - matView.eye.y ,matView.target.z - matView.eye.z };
-                camerafrontVec.V3Norm();
-                Vector3D cameraRightVec;
-                cameraRightVec = cameraRightVec.GetV3Cross(Vector3D{ 0,1,0 }, camerafrontVec);
-                cameraRightVec.V3Norm();
-
-                if (input->IsKeyDown(DIK_D)) { tempmove.x += 1.0f; };
-                if (input->IsKeyDown(DIK_A)) { tempmove.x -= 1.0f; };
-                if (input->IsKeyDown(DIK_W)) { tempmove.z += 1.0f; };
-                if (input->IsKeyDown(DIK_S)) { tempmove.z -= 1.0f; };
-
-                move.x = cameraRightVec.vec.x * tempmove.x + camerafrontVec.vec.x * tempmove.x;
-                move.y = cameraRightVec.vec.y * tempmove.y + camerafrontVec.vec.y * tempmove.y;
-                move.z = cameraRightVec.vec.z * tempmove.z + camerafrontVec.vec.z * tempmove.z;
-
-                Box[0].position.x += move.x;
-                Box[0].position.y += move.y;
-                Box[0].position.z += move.z;
-
-            }
-
-        }
-
-
-
-
-
-        for (int i = 0; i < Box.size(); i++)
+        for (int i = 0; i < 9; i++)
         {
             Box[i].Updata(matView, matProjection);
         }
@@ -329,10 +289,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             Box2[i].Updata(matView, matProjection);
         }
 
+        
+        Skydorm.Updata(matView, matProjection);
+        ground.Updata(matView, matProjection);
 
-        //sprite.position = { (float)dxWindow->window_width / 2,(float)dxWindow->window_height / 2,0 };
-        //sprite.SpriteUpdate(sprite);
-        //
 
 
 #pragma endregion 更新処理
@@ -341,7 +301,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         draw.PreDraw(*dx, depth, descriptor, obj3dPipeline, *dxWindow, clearColor);
 
-        
+        Skydorm.Draw(*dx, descriptor);
+        ground.Draw(*dx, descriptor);
 
         for (int i = 0; i < Box.size(); i++)
         {
@@ -355,7 +316,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         sprite.SpriteCommonBeginDraw(*dx, spritePipeline, descriptor);
 
-        sprite.SpriteDraw(sprite, *dx, descriptor, testTex, (float)dxWindow->window_width / 2, (float)dxWindow->window_height / 2);
+        //sprite.SpriteFlipDraw(sprite, *dx, descriptor, testTex, (float)dxWindow->window_width / 2, (float)dxWindow->window_height / 2);
+        //debugText.Print(0, 600, 1, "hogehogehogehoge",Box[0].position.x, Box[0].position.y, Box[0].position.z);
+
+        //sprite.SpriteDraw(sprite, *dx, descriptor, ground.model->texture);
+
+        debugText.AllDraw(descriptor);
+
+
 
 #pragma endregion 描画コマンド
         //----------------------
@@ -371,13 +339,20 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     }
 #pragma endregion ゲームループ
+
+    soundManager.ReleasexAudio2();
+    soundManager.AllDeleteSound();
+    //testSound.DeleteSound();
+
     //---------------------------------
     delete dxWindow;
     delete dx;
     delete input;
     delete BoxModel;
-    //delete testTex;
-}
+    delete skydomeModel;
+    delete groundModel;
+
+}   
     _CrtDumpMemoryLeaks();
 
 	return 0;

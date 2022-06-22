@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="Depth.cpp" />
     <ClCompile Include="Descriptor.cpp" />
     <ClCompile Include="Draw.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="RootParameter.cpp" />
     <ClCompile Include="RootSignature.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="TexImgData.cpp" />
     <ClCompile Include="TexSample.cpp" />
@@ -128,6 +130,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DebugText.h" />
     <ClInclude Include="Depth.h" />
     <ClInclude Include="Descriptor.h" />
     <ClInclude Include="Draw.h" />
@@ -149,6 +152,7 @@
     <ClInclude Include="RootParameter.h" />
     <ClInclude Include="RootSignature.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TexImgData.h" />
     <ClInclude Include="TexSample.h" />
