@@ -253,9 +253,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     Quaternion BoxRotationQ = {1,0,0,0};
     BoxRotationQ.SetRota({ 0,1,0 }, 0);
+    //Float3 rollPitchYawAngle = { 0,0,0 };
+
+    Vector3D objectRightAxis = { 1,0,0 };
+    Vector3D objectUpAxis = { 0,1,0 };
     Float3 rollPitchYawAngle = { 0,0,0 };
-
-
 
 #pragma endregion ゲームループ用変数
     //--------------------------
@@ -277,6 +279,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma region 更新処理
 
 
+        if (input->IsKeyDown(DIK_R))
+        {
+            BoxRotationQ = { 1,0,0,0 };
+            BoxRotationQ.SetRota({ 0,1,0 }, 0);
+            objectRightAxis.vec = { 1,0,0 };
+            objectUpAxis.vec = { 0,1,0 };
+            rollPitchYawAngle = { 0,0,0 };
+            Box.begin()->nowFrontVec.vec = { 0,0,1 };
+        }
 
 
 
@@ -305,13 +316,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         matView.UpDateMatrixView();
 
 
+
+        objectRightAxis = objectRightAxis.GetRightVec(Box.begin()->nowFrontVec);
+        objectUpAxis = objectUpAxis.GetUpVec(objectRightAxis, Box.begin()->nowFrontVec);
+
         if (input->IsKeyDown(DIK_S) || input->IsKeyDown(DIK_W) || input->IsKeyDown(DIK_A)|| input->IsKeyDown(DIK_D) || input->IsKeyDown(DIK_Q) || input->IsKeyDown(DIK_E))
         {
-            Vector3D objectRightAxis = { 0,0,1 };
-            objectRightAxis = objectRightAxis.GetRightVec(Box.begin()->nowFrontVec);
 
-            Vector3D objectUpAxis = { 0,1,0 };
-            objectUpAxis = objectUpAxis.GetUpVec(Box.begin()->nowFrontVec);
 
             Quaternion PitchQ;
             PitchQ.SetRota(objectRightAxis, rollPitchYawAngle.z);
@@ -327,23 +338,26 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
                 if (input->IsKeyDown(DIK_S))
                 {
-                    rollPitchYawAngle.z -= 0.05f;
+                    rollPitchYawAngle.x -= 0.05f;
                 }
                 else
                 {
-                    rollPitchYawAngle.z += 0.05f;
+                    rollPitchYawAngle.x += 0.05f;
                 }
 
-                PitchQ.SetRota(objectRightAxis, rollPitchYawAngle.z);
+                //PitchQ.SetRota(objectRightAxis, rollPitchYawAngle.x);
 
                 Quaternion tempVec = { 0,0,0,0 };
-                tempVec = PitchQ.SetRotationQuaternion(objectRightAxis, Box.begin()->nowFrontVec, rollPitchYawAngle.z);
+                tempVec = PitchQ.SetRotationQuaternion(objectRightAxis, Box.begin()->nowFrontVec, rollPitchYawAngle.x);
 
                 Box.begin()->nowFrontVec.vec.x = tempVec.x;
                 Box.begin()->nowFrontVec.vec.y = tempVec.y;
                 Box.begin()->nowFrontVec.vec.z = tempVec.z;
 
-                objectUpAxis = objectUpAxis.GetUpVec(Box.begin()->nowFrontVec);
+                objectUpAxis = objectUpAxis.GetUpVec(objectRightAxis,Box.begin()->nowFrontVec);
+
+                //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, PitchQ);
+
             }
 
             if (input->IsKeyDown(DIK_Q) || input->IsKeyDown(DIK_E))
@@ -361,13 +375,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
                 YawQ.SetRota(objectUpAxis, rollPitchYawAngle.y);
 
                 Quaternion tempVec = { 0,0,0,0 };
-                tempVec = YawQ.SetRotationQuaternion(objectUpAxis, Box.begin()->nowFrontVec, rollPitchYawAngle.z);
+                tempVec = YawQ.SetRotationQuaternion(objectUpAxis, Box.begin()->nowFrontVec, rollPitchYawAngle.y);
 
                 Box.begin()->nowFrontVec.vec.x = tempVec.x;
                 Box.begin()->nowFrontVec.vec.y = tempVec.y;
                 Box.begin()->nowFrontVec.vec.z = tempVec.z;
 
+                Box.begin()->nowFrontVec.V3Norm();
 
+                //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, YawQ);
             }
 
 
@@ -376,19 +392,25 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
                 if (input->IsKeyDown(DIK_A))
                 {
-                    rollPitchYawAngle.x -= 0.05f;
+                    rollPitchYawAngle.z -= 0.05f;
                 }
                 else
                 {
-                    rollPitchYawAngle.x += 0.05f;
+                    rollPitchYawAngle.z += 0.05f;
                 }
 
-                RollQ.SetRota(Box.begin()->nowFrontVec, rollPitchYawAngle.x);
+                //RollQ.SetRota(Box.begin()->nowFrontVec, rollPitchYawAngle.z);
+
+                //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, RollQ);
             }
 
+            Quaternion NewQ = {0,0,0,1};
 
-            BoxRotationQ = BoxRotationQ.GetCartesianProduct(PitchQ, YawQ);
-            BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, RollQ);
+            //NewQ = BoxRotationQ.GetCartesianProduct(RollQ,PitchQ );
+            //NewQ = BoxRotationQ.GetCartesianProduct(NewQ, YawQ);
+            //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, NewQ);
+
+            BoxRotationQ = BoxRotationQ.SetToRorateObjectToInternal(rollPitchYawAngle);
 
         }
 
@@ -440,7 +462,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         //debugText.Print(0, 600, 1, "hogehogehogehoge",Box[0].position.x, Box[0].position.y, Box[0].position.z);
 
         //sprite.SpriteDraw(sprite, *dx, descriptor, ground.model->texture);
-
+        
+        debugText.Print(0, 200, 1, "objectRightAxis:%f, %f, %f", (float)objectRightAxis.vec.x, (float)objectRightAxis.vec.y, (float)objectRightAxis.vec.z);
+        debugText.Print(0, 400, 1, "objectUpAxis:%f, %f, %f", (float)objectUpAxis.vec.x, (float)objectUpAxis.vec.y, (float)objectUpAxis.vec.z);
+        debugText.Print(0, 600, 1, "Box:%f, %f, %f", (float)Box.begin()->nowFrontVec.vec.x, (float)Box.begin()->nowFrontVec.vec.y, (float)Box.begin()->nowFrontVec.vec.z);
+        
         debugText.AllDraw(descriptor);
 
 

@@ -19,7 +19,10 @@ namespace MCB
 		float GetAngle(Quaternion a, Quaternion b);
 		Quaternion Slerp(Quaternion start, Quaternion end, int time,int maxTime);
 		Quaternion SetRotationQuaternion(Vector3D rotationAxisVec, Vector3D PositionVec, float angle);
+		void QuaternoinNorm();
 		MCBMatrix GetQuaternionRotaMat(Quaternion rotaQ);
+		void SinCos(float* returnSin, float* returnCos, float theta);
+		Quaternion SetToRorateObjectToInternal(const Float3 eulerAngle);
 	};
 }
 

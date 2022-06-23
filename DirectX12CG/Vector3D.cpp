@@ -36,8 +36,9 @@ float MCB::Vector3D::V3Len() const
 void MCB::Vector3D::V3Norm()
 {
 	float VecLen = V3Len();
-	if (VecLen == 0)
+	if (VecLen == 0.0f)
 	{
+		assert(0);
 		return;
 	}
 
