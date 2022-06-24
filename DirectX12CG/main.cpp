@@ -152,7 +152,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     debugTextTexture.CreateTexture(*dx, L"Resources\\debugfont.png", &descriptor);
 
     //3Dモデル読み込み
-    Model* BoxModel = new Model(*dx, "Box", &descriptor);
+    Model* BoxModel = new Model(*dx, "Test", &descriptor);
     
     Model* groundModel = new Model(*dx, "ground", &descriptor);
 
@@ -257,7 +257,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     Vector3D objectRightAxis = { 1,0,0 };
     Vector3D objectUpAxis = { 0,1,0 };
-    Float3 rollPitchYawAngle = { 0,0,0 };
+
 
 #pragma endregion ゲームループ用変数
     //--------------------------
@@ -278,6 +278,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 #pragma region 更新処理
 
+        Float3 rollPitchYawAngle = { 0,0,0 };
+        Box.begin()->nowFrontVec.vec = { 0,0,1 };
 
         if (input->IsKeyDown(DIK_R))
         {
@@ -345,16 +347,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
                     rollPitchYawAngle.x += 0.05f;
                 }
 
-                //PitchQ.SetRota(objectRightAxis, rollPitchYawAngle.x);
+                PitchQ.SetRota(objectRightAxis, rollPitchYawAngle.x);
 
-                Quaternion tempVec = { 0,0,0,0 };
-                tempVec = PitchQ.SetRotationQuaternion(objectRightAxis, Box.begin()->nowFrontVec, rollPitchYawAngle.x);
+                //Quaternion tempVec = { 0,0,0,0 };
+                //tempVec = PitchQ.SetRotationQuaternion(objectRightAxis, Box.begin()->nowFrontVec, rollPitchYawAngle.x);
 
-                Box.begin()->nowFrontVec.vec.x = tempVec.x;
-                Box.begin()->nowFrontVec.vec.y = tempVec.y;
-                Box.begin()->nowFrontVec.vec.z = tempVec.z;
+                //Box.begin()->nowFrontVec.vec.x = tempVec.x;
+                //Box.begin()->nowFrontVec.vec.y = tempVec.y;
+                //Box.begin()->nowFrontVec.vec.z = tempVec.z;
 
-                objectUpAxis = objectUpAxis.GetUpVec(objectRightAxis,Box.begin()->nowFrontVec);
+                //objectUpAxis = objectUpAxis.GetUpVec(objectRightAxis,Box.begin()->nowFrontVec);
 
                 //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, PitchQ);
 
@@ -377,11 +379,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
                 Quaternion tempVec = { 0,0,0,0 };
                 tempVec = YawQ.SetRotationQuaternion(objectUpAxis, Box.begin()->nowFrontVec, rollPitchYawAngle.y);
 
-                Box.begin()->nowFrontVec.vec.x = tempVec.x;
-                Box.begin()->nowFrontVec.vec.y = tempVec.y;
-                Box.begin()->nowFrontVec.vec.z = tempVec.z;
+                //Box.begin()->nowFrontVec.vec.x = tempVec.x;
+                //Box.begin()->nowFrontVec.vec.y = tempVec.y;
+                //Box.begin()->nowFrontVec.vec.z = tempVec.z;
 
-                Box.begin()->nowFrontVec.V3Norm();
+                //Box.begin()->nowFrontVec.V3Norm();
 
                 //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, YawQ);
             }
@@ -399,31 +401,34 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
                     rollPitchYawAngle.z += 0.05f;
                 }
 
-                //RollQ.SetRota(Box.begin()->nowFrontVec, rollPitchYawAngle.z);
+                RollQ.SetRota(Box.begin()->nowFrontVec, rollPitchYawAngle.z);
 
-                //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, RollQ);
+                BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, RollQ);
             }
 
             Quaternion NewQ = {0,0,0,1};
 
-            //NewQ = BoxRotationQ.GetCartesianProduct(RollQ,PitchQ );
-            //NewQ = BoxRotationQ.GetCartesianProduct(NewQ, YawQ);
-            //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, NewQ);
+            NewQ = BoxRotationQ.GetCartesianProduct(RollQ,PitchQ );
+            NewQ = BoxRotationQ.GetCartesianProduct(NewQ, YawQ);
+            BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, NewQ);
 
-            BoxRotationQ = BoxRotationQ.SetToRorateObjectToInternal(rollPitchYawAngle);
+            //BoxRotationQ = BoxRotationQ.SetToRorateObjectToInternal(rollPitchYawAngle);
+
 
         }
 
+        Quaternion tempVec = { 0,0,0,0 };
+        tempVec = BoxRotationQ.SetRotationQuaternion(BoxRotationQ, Box.begin()->nowFrontVec);
+
+        Box.begin()->nowFrontVec.vec.x = tempVec.x;
+        Box.begin()->nowFrontVec.vec.y = tempVec.y;
+        Box.begin()->nowFrontVec.vec.z = tempVec.z;
 
         for (int i = 0; i < 9; i++)
         {
             Box[i].Updata(matView, matProjection,BoxRotationQ);
         }
 
-        for (int i = 0; i < Box2.size(); i++)
-        {
-            Box2[i].Updata(matView, matProjection);
-        }
 
         
         Skydorm.Updata(matView, matProjection);
@@ -451,10 +456,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             Box[i].Draw(*dx, descriptor);
         }
 
-        for (int i = 0; i < Box2.size(); i++)
-        {
-            Box2[i].Draw(*dx, descriptor,0);
-        }
 
         sprite.SpriteCommonBeginDraw(*dx, spritePipeline, descriptor);
 
@@ -463,6 +464,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         //sprite.SpriteDraw(sprite, *dx, descriptor, ground.model->texture);
         
+        debugText.Print(0, 0, 1, "tempVec:%f, %f, %f, %f", (float)tempVec.x, (float)tempVec.y, (float)tempVec.z, tempVec.w);
         debugText.Print(0, 200, 1, "objectRightAxis:%f, %f, %f", (float)objectRightAxis.vec.x, (float)objectRightAxis.vec.y, (float)objectRightAxis.vec.z);
         debugText.Print(0, 400, 1, "objectUpAxis:%f, %f, %f", (float)objectUpAxis.vec.x, (float)objectUpAxis.vec.y, (float)objectUpAxis.vec.z);
         debugText.Print(0, 600, 1, "Box:%f, %f, %f", (float)Box.begin()->nowFrontVec.vec.x, (float)Box.begin()->nowFrontVec.vec.y, (float)Box.begin()->nowFrontVec.vec.z);
