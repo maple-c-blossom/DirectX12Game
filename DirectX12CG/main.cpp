@@ -124,7 +124,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     matView.CreateMatrixView(XMFLOAT3(0.0f, 0.0f, -100.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
     //ŽË‰e•ÏŠ·s—ñ
     Projection matProjection;
-    matProjection.CreateMatrixProjection(XMConvertToRadians(45.0f), (float)dxWindow->window_width / dxWindow->window_height, 0.1f, 4000.0f);
+    matProjection.CreateMatrixProjection(XMConvertToRadians(45.0f), (float)dxWindow->window_width / dxWindow->window_height, 0.1f, 100000.0f);
 #pragma endregion s—ñ
     //---------------------
 
@@ -169,13 +169,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     Object3d ground;
     ground.Init(*dx);
     ground.model = groundModel;
-    ground.scale = { 4,4,4 };
+    ground.scale = { 100,100,100 };
     ground.position = { 0,-15,0 };
 
     Object3d Skydorm;
     Skydorm.Init(*dx);
     Skydorm.model = skydomeModel;
-    Skydorm.scale = { 4,4,4 };
+    Skydorm.scale = { 100,100,100 };
 
 
     Box.begin()->model = BoxModel;
@@ -296,27 +296,27 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
        
 
-        if (input->IsKeyDown(DIK_RIGHT) || input->IsKeyDown(DIK_LEFT) || input->IsKeyDown(DIK_UP) || input->IsKeyDown(DIK_DOWN))
-        {
-            XMFLOAT3 move = { 0.0f,0.0f,0.0f };
-            if (input->IsKeyDown(DIK_RIGHT)) { move.x += 1.0f; }
-            else if (input->IsKeyDown(DIK_LEFT)) { move.x -= 1.0f; }
-            if (input->IsKeyDown(DIK_UP)) { move.z += 1.0f; }
-            else if (input->IsKeyDown(DIK_DOWN)) { move.z -= 1.0f; }
+        //if (input->IsKeyDown(DIK_RIGHT) || input->IsKeyDown(DIK_LEFT))
+        //{
+        //    XMFLOAT3 move = { 0.0f,0.0f,0.0f };
+        //    if (input->IsKeyDown(DIK_RIGHT)) { move.x += 1.0f; }
+        //    //else if (input->IsKeyDown(DIK_LEFT)) { move.x -= 1.0f; }
+        //    //if (input->IsKeyDown(DIK_UP)) { move.z += 1.0f; }
+        //    //else if (input->IsKeyDown(DIK_DOWN)) { move.z -= 1.0f; }
 
-            matView.eye.x += targetVec.x * move.z;
-            matView.eye.y += targetVec.y * move.z;
-            matView.eye.z += targetVec.z * move.z;
-            matView.eye.x += move.x;
-            matView.eye.y += move.y;
-            matView.eye.z += move.z;
-        }
+        //    matView.eye.x += targetVec.x * move.z;
+        //    matView.eye.y += targetVec.y * move.z;
+        //    matView.eye.z += targetVec.z * move.z;
+        //    matView.eye.x += move.x;
+        //    matView.eye.y += move.y;
+        //    matView.eye.z += move.z;
+        //}
 
-        matView.target.x = matView.eye.x + targetVec.x;
-        matView.target.y = matView.eye.y + targetVec.y;
-        matView.target.z = matView.eye.z + targetVec.z;
+        //matView.target.x = matView.eye.x + targetVec.x;
+        //matView.target.y = matView.eye.y + targetVec.y;
+        //matView.target.z = matView.eye.z + targetVec.z;
 
-        matView.UpDateMatrixView();
+        //matView.UpDateMatrixView();
 
 
 
@@ -339,11 +339,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
                 if (input->IsKeyDown(DIK_S))
                 {
-                    rollPitchYawAngle.x -= 0.05f;
+                    rollPitchYawAngle.x -= 0.015f;
                 }
                 else
                 {
-                    rollPitchYawAngle.x += 0.05f;
+                    rollPitchYawAngle.x += 0.015f;
                 }
 
                 PitchQ.SetRota({ 1,0,0 }, rollPitchYawAngle.x);
@@ -363,11 +363,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
                 if (input->IsKeyDown(DIK_E))
                 {
-                    rollPitchYawAngle.y -= 0.05f;
+                    rollPitchYawAngle.y -= 0.015f;
                 }
                 else
                 {
-                    rollPitchYawAngle.y += 0.05f;
+                    rollPitchYawAngle.y += 0.015f;
                 }
 
                 YawQ.SetRota({ 0,1,0 }, rollPitchYawAngle.y);
@@ -386,11 +386,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
                 if (input->IsKeyDown(DIK_A))
                 {
-                    rollPitchYawAngle.z -= 0.05f;
+                    rollPitchYawAngle.z -= 0.015f;
                 }
                 else
                 {
-                    rollPitchYawAngle.z += 0.05f;
+                    rollPitchYawAngle.z += 0.015f;
                 }
 
                 RollQ.SetRota({0,0,1}, rollPitchYawAngle.z);
@@ -437,6 +437,41 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         objectUpAxis.V3Norm();
 
         //objectUpAxis = objectUpAxis.GetUpVec(objectRightAxis, Box.begin()->nowFrontVec);
+
+        if (input->IsKeyDown(DIK_UP) || input->IsKeyDown(DIK_DOWN))
+        {
+            float speed = 0;
+            if (input->IsKeyDown(DIK_DOWN))
+            {
+                speed -= 5;
+            }
+            else
+            {
+                speed += 5;
+            }
+
+            Box[0].position.x += Box[0].nowFrontVec.vec.x * speed;
+            Box[0].position.y += Box[0].nowFrontVec.vec.y * speed;
+            Box[0].position.z += Box[0].nowFrontVec.vec.z * speed;
+        }
+
+
+
+        //matView.eye.x = Box[0].position.x;
+        //matView.eye.y = Box[0].position.y + 30;
+        //matView.eye.z = Box[0].position.z - 30;
+
+        matView.eye.x = Box[0].position.x + (100 * -Box[0].nowFrontVec.vec.x);
+        matView.eye.y = Box[0].position.y + (50 * -Box[0].nowFrontVec.vec.y);
+        matView.eye.z = Box[0].position.z + (100 * -Box[0].nowFrontVec.vec.z);
+
+        matView.target = Box[0].position;
+
+        matView.up.x = objectUpAxis.vec.x;
+        matView.up.y = objectUpAxis.vec.y;
+        matView.up.z = objectUpAxis.vec.z;
+
+        matView.UpDateMatrixView();
 
         for (int i = 0; i < 9; i++)
         {
