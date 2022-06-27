@@ -152,7 +152,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     debugTextTexture.CreateTexture(*dx, L"Resources\\debugfont.png", &descriptor);
 
     //3DÉÇÉfÉãì«Ç›çûÇ›
-    Model* BoxModel = new Model(*dx, "Test", &descriptor);
+    Model* BoxModel = new Model(*dx, "Test2", &descriptor);
     
     Model* groundModel = new Model(*dx, "ground", &descriptor);
 
