@@ -24,6 +24,11 @@ namespace MCB
 		MCBMatrix GetQuaternionRotaMat(Quaternion rotaQ);
 		void SinCos(float* returnSin, float* returnCos, float theta);
 		Quaternion SetToRorateObjectToInternal(const Float3 eulerAngle);
+		Vector3D GetRotationAxis(Quaternion q);
+		void GetRotationAxis(Quaternion q,Vector3D& AxisVec);
+		float GetAngle(Quaternion q);
+		float SafeAcos(float a);
+
 	};
 }
 

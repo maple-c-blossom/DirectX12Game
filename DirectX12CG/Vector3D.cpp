@@ -38,7 +38,7 @@ void MCB::Vector3D::V3Norm()
 	float VecLen = V3Len();
 	if (VecLen == 0.0f)
 	{
-		assert(0);
+		//assert(0);
 		return;
 	}
 
@@ -100,7 +100,7 @@ float MCB::Vector3D::GetInnerProduct(Vector3D vector)
 	temp.vec = vec;
 	temp.V3Norm();
 	vector.V3Norm();
-	return temp.GetV3Dot(vector);
+	return acos(temp.GetV3Dot(vector));
 }
 
 Vector3D& MCB::Vector3D::operator+=(const Vector3D& Vec)

@@ -1,5 +1,6 @@
 #include "Quaternion.h"
 #include <cmath>
+#define PI 3.14159265358979323846264338327950288f
 using namespace MCB;
 
 void MCB::Quaternion::SetRota(Vector3D vec, float angle)
@@ -151,6 +152,66 @@ Quaternion MCB::Quaternion::SetToRorateObjectToInternal(const Float3 eulerAngle)
 	ans.w = ch * cp * cb + sh * sp * sb;
 
 	return ans;
+}
+
+Vector3D MCB::Quaternion::GetRotationAxis(Quaternion q)
+{
+	float sinThetaOver2Sq = 1.0f - q.w * q.w;
+
+	if (sinThetaOver2Sq <= 0.0f)
+	{
+		return Vector3D(0,0,1);
+	}
+
+
+	float oneOverSinThetaOver2 = 1.0f / sqrt(sinThetaOver2Sq);
+
+
+	return Vector3D(
+		q.x * oneOverSinThetaOver2,
+		q.y * oneOverSinThetaOver2,
+		q.z * oneOverSinThetaOver2
+		);
+
+}
+
+void MCB::Quaternion::GetRotationAxis(Quaternion q, Vector3D& AxisVec)
+{
+	float sinThetaOver2Sq = 1.0f - q.w * q.w;
+
+	if (sinThetaOver2Sq <= 0.0f)
+	{
+		return;
+	}
+
+
+	float oneOverSinThetaOver2 = 1.0f / sqrt(sinThetaOver2Sq);
+
+
+	AxisVec = Vector3D(
+		q.x * oneOverSinThetaOver2,
+		q.y * oneOverSinThetaOver2,
+		q.z * oneOverSinThetaOver2
+	);
+}
+
+float MCB::Quaternion::GetAngle(Quaternion q)
+{
+	float thetaOver2 = SafeAcos(q.w);
+	return thetaOver2 * 2.0f;
+}
+
+float MCB::Quaternion::SafeAcos(float a)
+{
+	if (a <= -1.0f)
+	{
+		return PI;
+	}
+	if (a >= 1.0f)
+	{
+		return 0.0f;
+	}
+	return acos(a);
 }
 
 MCB::Quaternion MCB::Quaternion::Slerp(Quaternion start, Quaternion end, int time, int maxTime)

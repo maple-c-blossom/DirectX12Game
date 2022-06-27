@@ -158,13 +158,19 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     Model* skydomeModel = new Model(*dx, "skydome", &descriptor);
 
-
+    Model* LineModel = new Model(*dx, "Box", &descriptor);
 
     //3Dオブジェクトの生成-------------------
 #pragma region 3Dオブジェクトの生成
     //Object3d* Box = new Object3d(*dx);
     std::array<Object3d, 20> Box;
     std::array<Object3d, 40> Box2;
+    Object3d Line;
+    Line.Init(*dx);
+    Line.model = LineModel;
+    Line.scale = { 0.5f,200,0.5f };
+    Line.position = {0,0,0};
+    Quaternion LineQ;
 
     Object3d ground;
     ground.Init(*dx);
@@ -257,8 +263,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     Vector3D objectRightAxis = { 1,0,0 };
     Vector3D objectUpAxis = { 0,1,0 };
-
-
+    float BoxRotation = 0.0f;
+    float tempAngle = 0.0f;
+    Quaternion q = { 0,0,0,1 };
+    Vector3D vec = BoxRotationQ.GetRotationAxis(BoxRotationQ);
 #pragma endregion ゲームループ用変数
     //--------------------------
 
@@ -321,7 +329,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 
 
-        if (input->IsKeyDown(DIK_S) || input->IsKeyDown(DIK_W) || input->IsKeyDown(DIK_A)|| input->IsKeyDown(DIK_D) || input->IsKeyDown(DIK_Q) || input->IsKeyDown(DIK_E))
+        if (input->IsKeyDown(DIK_S) || input->IsKeyDown(DIK_W) 
+            || input->IsKeyDown(DIK_A)|| input->IsKeyDown(DIK_D) 
+            || input->IsKeyDown(DIK_Q) || input->IsKeyDown(DIK_E))
         {
 
 
@@ -398,6 +408,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
                 //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, RollQ);
             }
 
+
+
+
             Quaternion NewQ = {0,0,0,1};
 
             NewQ = BoxRotationQ.GetCartesianProduct(RollQ,PitchQ );
@@ -409,6 +422,32 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         }
 
+        
+        if (input->IsKeyDown(DIK_C) || input->IsKeyDown(DIK_V))
+        {
+            BoxRotation = 0.0f;
+            if (input->IsKeyDown(DIK_V))
+            {
+                BoxRotation -= 0.1f;
+            }
+            else
+            {
+                BoxRotation += 0.1f;
+            }
+            q = {0,0,0,1};
+            BoxRotationQ.GetRotationAxis(BoxRotationQ,vec);
+
+            tempAngle = BoxRotationQ.GetAngle(BoxRotationQ);
+            tempAngle += BoxRotation;
+
+            if (tempAngle >= 2 * M_PI) tempAngle = 0;
+
+            BoxRotationQ.SetRota(vec, tempAngle);
+
+            //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, q);
+
+
+        }
         Quaternion tempVec = { 0,0,0,0 };
         tempVec = BoxRotationQ.SetRotationQuaternion(BoxRotationQ, Box.begin()->nowFrontVec);
 
@@ -456,22 +495,54 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         }
 
 
+        if (input->IsKeyDown(DIK_Z))
+        {
+            Line.scale.y++;
+        }
+        else if (input->IsKeyDown(DIK_X))
+        {
+            Line.scale.y--;
+        }
+
+
+
 
         //matView.eye.x = Box[0].position.x;
         //matView.eye.y = Box[0].position.y + 30;
         //matView.eye.z = Box[0].position.z - 30;
 
-        matView.eye.x = Box[0].position.x + (100 * -Box[0].nowFrontVec.vec.x);
-        matView.eye.y = Box[0].position.y + (50 * -Box[0].nowFrontVec.vec.y);
-        matView.eye.z = Box[0].position.z + (100 * -Box[0].nowFrontVec.vec.z);
+        //matView.eye.x = Box[0].position.x + (100 * -Box[0].nowFrontVec.vec.x);
+        //matView.eye.y = Box[0].position.y + (50 * -Box[0].nowFrontVec.vec.y);
+        //matView.eye.z = Box[0].position.z + (100 * -Box[0].nowFrontVec.vec.z);
 
-        matView.target = Box[0].position;
+        //matView.target = Box[0].position;
 
-        matView.up.x = objectUpAxis.vec.x;
-        matView.up.y = objectUpAxis.vec.y;
-        matView.up.z = objectUpAxis.vec.z;
+        //matView.up.x = objectUpAxis.vec.x;
+        //matView.up.y = objectUpAxis.vec.y;
+        //matView.up.z = objectUpAxis.vec.z;
 
         matView.UpDateMatrixView();
+
+
+
+        Line.position = Box[0].position;
+
+        LineQ = { 0,0,0,1 };
+
+        Vector3D BoxRotationAxis = { 0,0,1 };
+        float BoxAngle = 0;
+        Vector3D LineAxis = { 0,1,0 };
+
+        Vector3D tempAxis = { 0,1,0 };
+
+        BoxRotationAxis = BoxRotationQ.GetRotationAxis(BoxRotationQ);
+        LineAxis = LineAxis.GetV3Cross(BoxRotationAxis);
+        BoxAngle = tempAxis.GetInnerProduct(BoxRotationAxis);
+        
+
+        LineQ.SetRota(LineAxis, BoxAngle);
+
+        Line.Updata(matView, matProjection, LineQ);
 
         for (int i = 0; i < 9; i++)
         {
@@ -505,7 +576,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             Box[i].Draw(*dx, descriptor);
         }
 
-
+        Line.Draw(*dx, descriptor);
         sprite.SpriteCommonBeginDraw(*dx, spritePipeline, descriptor);
 
         //sprite.SpriteFlipDraw(sprite, *dx, descriptor, testTex, (float)dxWindow->window_width / 2, (float)dxWindow->window_height / 2);
@@ -513,7 +584,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         //sprite.SpriteDraw(sprite, *dx, descriptor, ground.model->texture);
         
-        debugText.Print(0, 0, 1, "tempVec:%f, %f, %f, %f", (float)tempVec.x, (float)tempVec.y, (float)tempVec.z, tempVec.w);
+        debugText.Print(0, 0, 1, "tempVec:%f, %f, %f, %f", vec.vec.x, vec.vec.y, vec.vec.z, tempAngle);
         debugText.Print(0, 200, 1, "objectRightAxis:%f, %f, %f", (float)objectRightAxis.vec.x, (float)objectRightAxis.vec.y, (float)objectRightAxis.vec.z);
         debugText.Print(0, 400, 1, "objectUpAxis:%f, %f, %f", (float)objectUpAxis.vec.x, (float)objectUpAxis.vec.y, (float)objectUpAxis.vec.z);
         debugText.Print(0, 600, 1, "Box:%f, %f, %f", (float)Box.begin()->nowFrontVec.vec.x, (float)Box.begin()->nowFrontVec.vec.y, (float)Box.begin()->nowFrontVec.vec.z);
@@ -548,7 +619,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     delete BoxModel;
     delete skydomeModel;
     delete groundModel;
-
+    delete LineModel;
 }   
     _CrtDumpMemoryLeaks();
 
