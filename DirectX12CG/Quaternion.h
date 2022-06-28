@@ -20,6 +20,7 @@ namespace MCB
 		Quaternion Slerp(Quaternion start, Quaternion end, int time,int maxTime);
 		Quaternion SetRotationQuaternion(Vector3D rotationAxisVec, Vector3D PositionVec, float angle);
 		Quaternion SetRotationQuaternion(Quaternion rotationQuaternion, Vector3D PositionVec);
+		Quaternion SetRotationQuaternion(Quaternion rotationQuaternion, Quaternion PositionVec);
 		void QuaternoinNorm();
 		MCBMatrix GetQuaternionRotaMat(Quaternion rotaQ);
 		void SinCos(float* returnSin, float* returnCos, float theta);

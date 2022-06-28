@@ -83,6 +83,17 @@ Quaternion MCB::Quaternion::SetRotationQuaternion(Quaternion rotationQuaternion,
 	return position;
 }
 
+Quaternion MCB::Quaternion::SetRotationQuaternion(Quaternion rotationQuaternion, Quaternion PositionVec)
+{
+
+	Quaternion position{};
+
+	position = GetCartesianProduct(rotationQuaternion, PositionVec);
+	position = GetCartesianProduct(PositionVec, GetReciprocal(rotationQuaternion));
+
+	position.QuaternoinNorm();
+	return position;
+}
 
 
 void MCB::Quaternion::QuaternoinNorm()

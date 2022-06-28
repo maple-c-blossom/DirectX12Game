@@ -267,6 +267,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     float tempAngle = 0.0f;
     Quaternion q = { 0,0,0,1 };
     Vector3D vec = BoxRotationQ.GetRotationAxis(BoxRotationQ);
+    
+    int AxisVecNum = 0;
 #pragma endregion ゲームループ用変数
     //--------------------------
 
@@ -428,26 +430,34 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             BoxRotation = 0.0f;
             if (input->IsKeyDown(DIK_V))
             {
-                BoxRotation -= 0.1f;
+                BoxRotation -= 0.01f;
             }
             else
             {
-                BoxRotation += 0.1f;
+                BoxRotation += 0.01f;
             }
             q = {0,0,0,1};
             BoxRotationQ.GetRotationAxis(BoxRotationQ,vec);
-
             tempAngle = BoxRotationQ.GetAngle(BoxRotationQ);
             tempAngle += BoxRotation;
 
-            if (tempAngle >= 2 * M_PI) tempAngle = 0;
+            if (tempAngle >= 2 * M_PI) BoxRotationQ.SetRota(vec, 0.01f);
 
-            BoxRotationQ.SetRota(vec, tempAngle);
+            else if (tempAngle < 0)  BoxRotationQ.SetRota(vec, 2 * M_PI - 0.01f);
 
-            //BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, q);
+            else
+            {
+                q.SetRota(vec, BoxRotation);
 
+                BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, q);
+            }
 
         }
+
+
+
+
+
         Quaternion tempVec = { 0,0,0,0 };
         tempVec = BoxRotationQ.SetRotationQuaternion(BoxRotationQ, Box.begin()->nowFrontVec);
 
@@ -475,7 +485,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         objectUpAxis.V3Norm();
 
-        //objectUpAxis = objectUpAxis.GetUpVec(objectRightAxis, Box.begin()->nowFrontVec);
+        objectUpAxis = objectUpAxis.GetUpVec(objectRightAxis, Box.begin()->nowFrontVec);
 
         if (input->IsKeyDown(DIK_UP) || input->IsKeyDown(DIK_DOWN))
         {
@@ -584,11 +594,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         //sprite.SpriteDraw(sprite, *dx, descriptor, ground.model->texture);
         
-        debugText.Print(0, 0, 1, "tempVec:%f, %f, %f, %f", vec.vec.x, vec.vec.y, vec.vec.z, tempAngle);
+       /* debugText.Print(0, 0, 1, "tempVec:%f, %f, %f, %f", vec.vec.x, vec.vec.y, vec.vec.z, tempAngle);
         debugText.Print(0, 200, 1, "objectRightAxis:%f, %f, %f", (float)objectRightAxis.vec.x, (float)objectRightAxis.vec.y, (float)objectRightAxis.vec.z);
         debugText.Print(0, 400, 1, "objectUpAxis:%f, %f, %f", (float)objectUpAxis.vec.x, (float)objectUpAxis.vec.y, (float)objectUpAxis.vec.z);
         debugText.Print(0, 600, 1, "Box:%f, %f, %f", (float)Box.begin()->nowFrontVec.vec.x, (float)Box.begin()->nowFrontVec.vec.y, (float)Box.begin()->nowFrontVec.vec.z);
-        
+        */
         debugText.AllDraw(descriptor);
 
 
