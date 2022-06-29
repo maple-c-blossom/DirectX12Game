@@ -11,5 +11,5 @@ float4 main(GSOutput input) : SV_TARGET
 	shader_color = m_ambient;
 	shader_color += m_diffuse * light_diffuse;
 	float4 texcolor = float4(tex.Sample(smp, input.uv));
-	return float4(texcolor.rgb * shader_color, texcolor.a * m_alpha);
+	return float4(texcolor.rgb * shader_color, texcolor.a * m_alpha) /** color*/;
 }

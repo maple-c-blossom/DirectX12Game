@@ -225,6 +225,15 @@ float MCB::Quaternion::SafeAcos(float a)
 	return acos(a);
 }
 
+bool MCB::Quaternion::operator==(Quaternion q)
+{
+	if (q.x == x && q.y == y && q.z == z && q.w == w)
+	{
+		return true;
+	}
+	return false;
+}
+
 MCB::Quaternion MCB::Quaternion::Slerp(Quaternion start, Quaternion end, int time, int maxTime)
 {
 	float Time = (float)time / (float)maxTime;

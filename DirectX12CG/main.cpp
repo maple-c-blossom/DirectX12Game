@@ -206,7 +206,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     for (int i = 0; i < Box2.size(); i++)
     {
         Box2[i].Init(*dx);
-        Box2[i].model = BoxModel;
+        Box2[i].model = LineModel;
         Box2[i].position.y = -10;
         Box2[i].scale = { 5,5,5 };
         if (i > 0)
@@ -269,6 +269,17 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     Vector3D vec = BoxRotationQ.GetRotationAxis(BoxRotationQ);
     
     int AxisVecNum = 0;
+
+    int Time = 0;
+    int MaxTime = 120;
+
+    Vector3D targetVector = { 0,1,0 };
+
+    Quaternion StartQ = {0,0,0,1};
+    Quaternion EndQ = {0,0,0,1};
+    Quaternion TargetQ = {0,0,0,1};
+
+    InitRand();
 #pragma endregion ゲームループ用変数
     //--------------------------
 
@@ -301,7 +312,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             rollPitchYawAngle = { 0,0,0 };
             Box.begin()->nowFrontVec.vec = { 0,0,1 };
         }
-
 
 
        
@@ -424,35 +434,105 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         }
 
-        
-        if (input->IsKeyDown(DIK_C) || input->IsKeyDown(DIK_V))
+        if (input->IsKeyTrigger(DIK_RETURN))
         {
-            BoxRotation = 0.0f;
-            if (input->IsKeyDown(DIK_V))
-            {
-                BoxRotation -= 0.01f;
-            }
-            else
-            {
-                BoxRotation += 0.01f;
-            }
-            q = {0,0,0,1};
-            BoxRotationQ.GetRotationAxis(BoxRotationQ,vec);
-            tempAngle = BoxRotationQ.GetAngle(BoxRotationQ);
-            tempAngle += BoxRotation;
+            Box2[0].position = { (float)GetRand(-50,50),(float)GetRand(0,50) ,(float)GetRand(0,100) };
+            Time = 0;        
+           
+            Vector3D Axis = { 0,1,0 };
 
-            if (tempAngle >= 2 * M_PI) BoxRotationQ.SetRota(vec, 0.01f);
+            targetVector.vec.x = 0;
+            targetVector.vec.y = 0;
+            targetVector.vec.z = 1;
 
-            else if (tempAngle < 0)  BoxRotationQ.SetRota(vec, 2 * M_PI - 0.01f);
+            Float3 start;
+            start.x = Box[0].position.x;
+            start.y = Box[0].position.y;
+            start.z = Box[0].position.z;
+            
+            Float3 end;
+            end.x = Box2[0].position.x;
+            end.y = Box2[0].position.y;
+            end.z = Box2[0].position.z;
+            targetVector = targetVector.V3Get(start, end);
+    
+            Axis = Box[0].nowFrontVec.GetV3Cross(Box[0].nowFrontVec, targetVector);
+            float angle = targetVector.GetInnerProduct(Box[0].nowFrontVec);
 
-            else
-            {
-                q.SetRota(vec, BoxRotation);
+            
 
-                BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, q);
-            }
-
+            EndQ.SetRota(Axis, angle);
+            StartQ = BoxRotationQ;
+            //LineQ.SetRota(LineAxis, BoxAngle);
         }
+
+        if (!(Box[0].nowFrontVec.vec.x == targetVector.vec.x &&
+            Box[0].nowFrontVec.vec.y == targetVector.vec.y &&
+            Box[0].nowFrontVec.vec.z == targetVector.vec.z )&& 
+            Time >= MaxTime)
+        {
+            Vector3D Axis = { 0,1,0 };
+
+            targetVector.vec.x = 0;
+            targetVector.vec.y = 0;
+            targetVector.vec.z = 1;
+            Float3 start;
+            start.x = Box[0].position.x;
+            start.y = Box[0].position.y;
+            start.z = Box[0].position.z;
+
+            Float3 end;
+            end.x = Box2[0].position.x;
+            end.y = Box2[0].position.y;
+            end.z = Box2[0].position.z;
+            targetVector = targetVector.V3Get(start, end);
+
+            Axis = Box[0].nowFrontVec.GetV3Cross(Box[0].nowFrontVec, targetVector);
+            float angle = targetVector.GetInnerProduct(Box[0].nowFrontVec);
+            EndQ.SetRota(Axis, angle);
+            StartQ = BoxRotationQ;
+            Time = 0;
+        }
+
+
+        if (!(BoxRotationQ == EndQ))
+        {
+            if (Time < MaxTime)
+            {
+                Time++;
+            }
+            BoxRotationQ = BoxRotationQ.Slerp(StartQ, EndQ, Time, MaxTime);
+        }
+
+        //if (input->IsKeyDown(DIK_C) || input->IsKeyDown(DIK_V))
+        //{
+        //    BoxRotation = 0.0f;
+        //    if (input->IsKeyDown(DIK_V))
+        //    {
+        //        BoxRotation -= 0.01f;
+        //    }
+        //    else
+        //    {
+        //        BoxRotation += 0.01f;
+        //    }
+        //    q = {0,0,0,1};
+        //    BoxRotationQ.GetRotationAxis(BoxRotationQ,vec);
+        //    tempAngle = BoxRotationQ.GetAngle(BoxRotationQ);
+        //    tempAngle += BoxRotation;
+
+        //    //if (tempAngle >= 2 * M_PI) BoxRotationQ.SetRota(vec, 0.01f);
+
+        //    //else if (tempAngle < 0)  BoxRotationQ.SetRota(vec, 2 * M_PI - 0.01f);
+
+        //    //else
+        //    //{
+        //        q.SetRota(vec, BoxRotation);
+
+        //        BoxRotationQ = BoxRotationQ.GetCartesianProduct(BoxRotationQ, q);
+
+        //    //}
+
+        //}
 
 
 
@@ -492,11 +572,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             float speed = 0;
             if (input->IsKeyDown(DIK_DOWN))
             {
-                speed -= 5;
+                speed -= 10;
             }
             else
             {
-                speed += 5;
+                speed += 10;
             }
 
             Box[0].position.x += Box[0].nowFrontVec.vec.x * speed;
@@ -558,6 +638,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         {
             Box[i].Updata(matView, matProjection,BoxRotationQ);
         }
+            Box2[0].Updata(matView, matProjection);
 
 
         
@@ -585,6 +666,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         {
             Box[i].Draw(*dx, descriptor);
         }
+            Box2[0].Draw(*dx, descriptor);
 
         Line.Draw(*dx, descriptor);
         sprite.SpriteCommonBeginDraw(*dx, spritePipeline, descriptor);

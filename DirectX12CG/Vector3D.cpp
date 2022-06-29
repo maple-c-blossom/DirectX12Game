@@ -7,6 +7,9 @@ MCB::Vector3D::Vector3D(Float3 start, Float3 end)
 {
 	vec = end - start;
 }
+
+
+
 MCB::Vector3D::Vector3D()
 {
 	vec.x = 0;

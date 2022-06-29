@@ -30,6 +30,7 @@ namespace MCB
 		float GetAngle(Quaternion q);
 		float SafeAcos(float a);
 
+		bool operator== (Quaternion q);
 	};
 }
 

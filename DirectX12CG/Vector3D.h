@@ -8,6 +8,7 @@ namespace MCB
 	public:
 		Float3 vec;
 		Vector3D(Float3 start, Float3 end);
+		Vector3D(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end);
 		Vector3D();
 		Vector3D(const Float3 vec);
 		Vector3D(const float x, const float y,const float z);

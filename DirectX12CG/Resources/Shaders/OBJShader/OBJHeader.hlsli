@@ -9,6 +9,7 @@ cbuffer cbuff1 : register(b1)
 	float3 m_diffuse :packoffset(c1);
 	float3 m_specular :packoffset(c2);
 	float m_alpha : packoffset(c2.w);
+	//float4 color : packoffset(c3);
 }
 
 struct VSOutput
