@@ -121,7 +121,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #pragma region 行列
         //ビュー変換行列
     View matView;
-    matView.CreateMatrixView(XMFLOAT3(0.0f, 0.0f, -100.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    matView.CreateMatrixView(XMFLOAT3(0.0f, 0.0f, -500.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
     //射影変換行列
     Projection matProjection;
     matProjection.CreateMatrixProjection(XMConvertToRadians(45.0f), (float)dxWindow->window_width / dxWindow->window_height, 0.1f, 100000.0f);
@@ -208,7 +208,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         Box2[i].Init(*dx);
         Box2[i].model = LineModel;
         Box2[i].position.y = -10;
-        Box2[i].scale = { 5,5,5 };
+        Box2[i].scale = { 10,10,10};
         if (i > 0)
         {
               Box2[i].position.z = Box2[i - 1].position.z + 20;
@@ -434,75 +434,86 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         }
 
-        if (input->IsKeyTrigger(DIK_RETURN))
-        {
-            Box2[0].position = { (float)GetRand(-50,50),(float)GetRand(0,50) ,(float)GetRand(0,100) };
-            Time = 0;        
-           
-            Vector3D Axis = { 0,1,0 };
+        //if (input->IsKeyTrigger(DIK_RETURN))
+        //{
+        //    Box2[0].position = { (float)GetRand(-50,50),(float)GetRand(0,50) ,(float)GetRand(0,100) };
+        //    Time = 0;        
+        //   
+        //    Vector3D Axis = { 0,1,0 };
 
-            targetVector.vec.x = 0;
-            targetVector.vec.y = 0;
-            targetVector.vec.z = 1;
+        //    targetVector.vec.x = 0;
+        //    targetVector.vec.y = 0;
+        //    targetVector.vec.z = 1;
 
-            Float3 start;
-            start.x = Box[0].position.x;
-            start.y = Box[0].position.y;
-            start.z = Box[0].position.z;
-            
-            Float3 end;
-            end.x = Box2[0].position.x;
-            end.y = Box2[0].position.y;
-            end.z = Box2[0].position.z;
-            targetVector = targetVector.V3Get(start, end);
+        //    Float3 start;
+        //    start.x = Box[0].position.x;
+        //    start.y = Box[0].position.y;
+        //    start.z = Box[0].position.z;
+        //    
+        //    Float3 end;
+        //    end.x = Box2[0].position.x;
+        //    end.y = Box2[0].position.y;
+        //    end.z = Box2[0].position.z;
+        //    targetVector = targetVector.V3Get(start, end);
     
-            Axis = Box[0].nowFrontVec.GetV3Cross(Box[0].nowFrontVec, targetVector);
-            float angle = targetVector.GetInnerProduct(Box[0].nowFrontVec);
+        //    Axis = Box[0].nowFrontVec.GetV3Cross(Box[0].nowFrontVec, targetVector);
+        //    float angle = targetVector.GetInnerProduct(Box[0].nowFrontVec);
 
-            
+        //    
 
-            EndQ.SetRota(Axis, angle);
-            StartQ = BoxRotationQ;
-            //LineQ.SetRota(LineAxis, BoxAngle);
-        }
+        //    EndQ.SetRota(Axis, angle);
+        //    StartQ = BoxRotationQ;
+        //    //LineQ.SetRota(LineAxis, BoxAngle);
+        //    MaxTime = 120;
+        //}
 
-        if (!(Box[0].nowFrontVec.vec.x == targetVector.vec.x &&
-            Box[0].nowFrontVec.vec.y == targetVector.vec.y &&
-            Box[0].nowFrontVec.vec.z == targetVector.vec.z )&& 
-            Time >= MaxTime)
-        {
-            Vector3D Axis = { 0,1,0 };
+        //if (!(Box[0].nowFrontVec.vec.x == targetVector.vec.x &&
+        //    Box[0].nowFrontVec.vec.y == targetVector.vec.y &&
+        //    Box[0].nowFrontVec.vec.z == targetVector.vec.z )&& 
+        //    Time >= MaxTime)
+        //{
+        //    Vector3D Axis = { 0,1,0 };
 
-            targetVector.vec.x = 0;
-            targetVector.vec.y = 0;
-            targetVector.vec.z = 1;
-            Float3 start;
-            start.x = Box[0].position.x;
-            start.y = Box[0].position.y;
-            start.z = Box[0].position.z;
+        //    targetVector.vec.x = 0;
+        //    targetVector.vec.y = 0;
+        //    targetVector.vec.z = 1;
+        //    Float3 start;
+        //    start.x = Box[0].position.x;
+        //    start.y = Box[0].position.y;
+        //    start.z = Box[0].position.z;
 
-            Float3 end;
-            end.x = Box2[0].position.x;
-            end.y = Box2[0].position.y;
-            end.z = Box2[0].position.z;
-            targetVector = targetVector.V3Get(start, end);
+        //    Float3 end;
+        //    end.x = Box2[0].position.x;
+        //    end.y = Box2[0].position.y;
+        //    end.z = Box2[0].position.z;
+        //    targetVector = targetVector.V3Get(start, end);
 
-            Axis = Box[0].nowFrontVec.GetV3Cross(Box[0].nowFrontVec, targetVector);
-            float angle = targetVector.GetInnerProduct(Box[0].nowFrontVec);
-            EndQ.SetRota(Axis, angle);
-            StartQ = BoxRotationQ;
-            Time = 0;
-        }
+        //    Axis = Box[0].nowFrontVec.GetV3Cross(Box[0].nowFrontVec, targetVector);
+        //    float angle = targetVector.GetInnerProduct(Box[0].nowFrontVec);
+        //    EndQ.SetRota(Axis, angle);
+        //    StartQ = BoxRotationQ;
+        //    Time = 0;
+        //    if (MaxTime / 2 > 10)
+        //    {
+        //        MaxTime /= 2;
+        //    }
+        //    else
+        //    {
+        //        MaxTime = 120;
+        //    }
+        //    
+        //}
 
 
-        if (!(BoxRotationQ == EndQ))
-        {
-            if (Time < MaxTime)
-            {
-                Time++;
-            }
-            BoxRotationQ = BoxRotationQ.Slerp(StartQ, EndQ, Time, MaxTime);
-        }
+        //if (!(BoxRotationQ == EndQ))
+        //{
+        //    if (Time < MaxTime)
+        //    {
+        //        Time++;
+        //    }
+        //    BoxRotationQ = BoxRotationQ.Slerp(StartQ, EndQ, Time, MaxTime);
+        //}
+
 
         //if (input->IsKeyDown(DIK_C) || input->IsKeyDown(DIK_V))
         //{
@@ -537,7 +548,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 
 
-
+        if (!(isfinite(BoxRotationQ.x)) || !(isfinite(BoxRotationQ.y))|| !(isfinite(BoxRotationQ.z)) || !(isfinite(BoxRotationQ.w)))
+        {
+            BoxRotationQ.SetRota({ 1,0,0 }, 0);
+        }
         Quaternion tempVec = { 0,0,0,0 };
         tempVec = BoxRotationQ.SetRotationQuaternion(BoxRotationQ, Box.begin()->nowFrontVec);
 
@@ -572,11 +586,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             float speed = 0;
             if (input->IsKeyDown(DIK_DOWN))
             {
-                speed -= 10;
+                speed -= 1;
             }
             else
             {
-                speed += 10;
+                speed += 1;
             }
 
             Box[0].position.x += Box[0].nowFrontVec.vec.x * speed;
@@ -654,7 +668,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         draw.PreDraw(*dx, depth, descriptor, obj3dPipeline, *dxWindow, clearColor);
 
         Skydorm.Draw(*dx, descriptor);
-        ground.Draw(*dx, descriptor);
+        //ground.Draw(*dx, descriptor);
 
         //for (int i = 0; i < Box.size(); i++)
         //{
@@ -666,9 +680,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         {
             Box[i].Draw(*dx, descriptor);
         }
-            Box2[0].Draw(*dx, descriptor);
+            //Box2[0].Draw(*dx, descriptor);
 
-        Line.Draw(*dx, descriptor);
+        //Line.Draw(*dx, descriptor);
         sprite.SpriteCommonBeginDraw(*dx, spritePipeline, descriptor);
 
         //sprite.SpriteFlipDraw(sprite, *dx, descriptor, testTex, (float)dxWindow->window_width / 2, (float)dxWindow->window_height / 2);
@@ -676,7 +690,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         //sprite.SpriteDraw(sprite, *dx, descriptor, ground.model->texture);
         
-       /* debugText.Print(0, 0, 1, "tempVec:%f, %f, %f, %f", vec.vec.x, vec.vec.y, vec.vec.z, tempAngle);
+       /* debugText.Print(0, 0, 1, "tempVec:%f, %f,Time  %d, %d", vec.vec.x, vec.vec.y, MaxTime, Time);
         debugText.Print(0, 200, 1, "objectRightAxis:%f, %f, %f", (float)objectRightAxis.vec.x, (float)objectRightAxis.vec.y, (float)objectRightAxis.vec.z);
         debugText.Print(0, 400, 1, "objectUpAxis:%f, %f, %f", (float)objectUpAxis.vec.x, (float)objectUpAxis.vec.y, (float)objectUpAxis.vec.z);
         debugText.Print(0, 600, 1, "Box:%f, %f, %f", (float)Box.begin()->nowFrontVec.vec.x, (float)Box.begin()->nowFrontVec.vec.y, (float)Box.begin()->nowFrontVec.vec.z);

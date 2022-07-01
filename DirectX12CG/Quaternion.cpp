@@ -264,5 +264,6 @@ MCB::Quaternion MCB::Quaternion::Slerp(Quaternion start, Quaternion end, int tim
 	ans.z = coeff1 * start.z + coeff2 * end.z;
 	ans.w = coeff1 * start.w + coeff2 * end.w;
 
+	ans.QuaternoinNorm();
 	return ans;
 }
