@@ -272,6 +272,7 @@ void MCB::Model::LoadMaterial(const std::string& directoryPath, const std::strin
 
     }
     file.close();
+    material.Update();
 
 }
 

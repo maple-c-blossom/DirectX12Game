@@ -57,6 +57,15 @@ void MCB::ObjectMaterial::SetIndex(D3D12_RESOURCE_DIMENSION dimension, UINT size
     Resdesc.Layout = layput;
 }
 
+void MCB::ObjectMaterial::Update()
+{
+    constMapMaterial->ambient = material.ambient;
+    constMapMaterial->diffuse = material.diffuse;
+    constMapMaterial->specular = material.specular;
+    constMapMaterial->alpha = material.alpha;
+    constMapMaterial->color = material.color;
+}
+
 void MCB::ObjectMaterial::SetVertexBuffer(D3D12_HEAP_TYPE heaptype, D3D12_RESOURCE_DIMENSION dimension, UINT sizeVB, int height, int DepthOrArraySize, int MipLevels, int SampleDescCount, D3D12_TEXTURE_LAYOUT layput)
 {
     HeapProp.Type = heaptype; // GPU‚Ö‚Ì“]‘——p

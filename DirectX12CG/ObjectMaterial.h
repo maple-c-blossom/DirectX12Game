@@ -67,6 +67,8 @@ namespace MCB
 		~ObjectMaterial();
 
 		void Init();
+		
+		void Update();
 
 		void SetIndex(D3D12_RESOURCE_DIMENSION dimension, UINT sizeIB, int height, int DepthOrArraySize, int MipLevels, int SampleDescCount, D3D12_TEXTURE_LAYOUT layout);
 
