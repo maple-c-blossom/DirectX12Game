@@ -16,7 +16,7 @@ namespace MCB
 	int Abs(int num);
 	float Abs(float num);
 	double Abs(double num);
-	float ConvertRadian(float angle);
+	float ConvertRadius(float angle);
 
 	void InitRand();
 	int GetRand(int min, int max);
