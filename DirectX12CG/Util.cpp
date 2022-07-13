@@ -119,7 +119,7 @@ double MCB::Abs(double num)
 	return num;
 }
 
-float MCB::ConvertRadius(float angle)
+float MCB::ConvertRadian(float angle)
 {
 	return angle * PI / 180.0f;
 }

@@ -72,7 +72,7 @@ void MCB::Sprite::SpriteUpdate(Sprite& sprite)
 {
     HRESULT result = S_FALSE;
     sprite.matWorld = DirectX::XMMatrixIdentity();
-    sprite.matWorld *= DirectX::XMMatrixRotationZ(ConvertRadius(sprite.rotation));
+    sprite.matWorld *= DirectX::XMMatrixRotationZ(ConvertRadian(sprite.rotation));
     sprite.matWorld *= XMMatrixTranslation(sprite.position.x, sprite.position.y, sprite.position.z);
 
     SpriteConstBufferDataTransform* constMap = nullptr;

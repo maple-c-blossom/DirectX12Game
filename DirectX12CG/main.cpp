@@ -363,6 +363,48 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             triangle.color.y -= 0.05f;
         }
 
+        if (triangle.color.z > 1)
+        {
+            colorUpZ = false;
+            triangle.color.z = 1;
+        }
+        if (triangle.color.z < 0)
+        {
+            colorUpZ = true;
+            triangle.color.z = 0;
+
+        }
+
+        if (colorUpZ)
+        {
+            triangle.color.z += 0.02f;
+        }
+        else
+        {
+            triangle.color.z -= 0.02f;
+        }
+
+        if (triangle.color.w > 1)
+        {
+            colorUpW = false;
+            triangle.color.w = 1;
+        }
+        if (triangle.color.w < 0)
+        {
+            colorUpW = true;
+            triangle.color.w = 0;
+
+        }
+
+        if (colorUpW)
+        {
+            triangle.color.w += 0.04f;
+        }
+        else
+        {
+            triangle.color.w -= 0.04f;
+        }
+
 
         triangle.triangle.scale = { 20,20,1 };
         
