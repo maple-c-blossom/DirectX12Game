@@ -170,7 +170,7 @@ void MCB::SimpleFigure::DrawTriangle(View view, Projection proj)
 
 
 
-	triangle.Updata(view,proj);
+	triangle.MatrixUpdata(view,proj);
 
 	//定数バッファビュー(CBV)の設定コマンド
 	dx12->commandList->SetGraphicsRootConstantBufferView(2, triangleMaterial.material.constBuffMaterialB1->GetGPUVirtualAddress());

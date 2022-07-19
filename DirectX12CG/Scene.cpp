@@ -7,6 +7,8 @@ MCB::Scene::~Scene()
 {
     soundManager.ReleasexAudio2();
     soundManager.AllDeleteSound();
+
+    delete player;
     delete BoxModel;
     delete skydomeModel;
     delete groundModel;
@@ -46,6 +48,8 @@ void MCB::Scene::Object3DInit()
     Skydorm.model = skydomeModel;
     Skydorm.scale = { 4,4,4 };
 
+    player = new Player;
+    player->Initialize(BoxModel);
 }
 
 #pragma endregion 通常変数の初期化
@@ -89,25 +93,34 @@ void MCB::Scene::SpriteInit()
 
 void MCB::Scene::Update()
 {
-
-
-
+    player->Update();
     //行列変換
     MatrixUpdate();
+}
+
+void MCB::Scene::Object3DDraw()
+{
+    Skydorm.Draw();
+    player->Draw();
+
+
+}
+
+void MCB::Scene::DrawSprite()
+{
+;
+
+    debugText.AllDraw();
 }
 
 void MCB::Scene::Draw()
 {
     draw.PreDraw(*depth, *obj3dPipelinePtr, clearColor);
     //3Dオブジェクト
-    Skydorm.Draw();
-    human.Draw();
-
+    Object3DDraw();
     //スプライト
     sprite.SpriteCommonBeginDraw(*spritePipelinePtr);
-
-
-    debugText.AllDraw();
+    DrawSprite();
     draw.PostDraw();
 }
 
@@ -116,9 +129,11 @@ void MCB::Scene::MatrixUpdate()
     matProjection.UpdataMatrixProjection();
     matView.UpDateMatrixView();
     human.UpDate(matView, matProjection);
-    Skydorm.Updata(matView, matProjection);
-    ground.Updata(matView, matProjection);
+    Skydorm.MatrixUpdata(matView, matProjection);
+    ground.MatrixUpdata(matView, matProjection);
+    player->playerObj.MatrixUpdata(matView, matProjection);
 }
+
 
 MCB::Scene::Scene(RootParameter* root, Depth* depthptr, PipelineRootSignature* pipeline, PipelineRootSignature* pipeline1)
 {

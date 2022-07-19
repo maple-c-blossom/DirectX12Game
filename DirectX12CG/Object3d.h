@@ -61,9 +61,9 @@ namespace MCB
 
         void Init();
 
-        void Updata(View& view, Projection& projection, bool isBillBord = false);
+        void MatrixUpdata(View& view, Projection& projection, bool isBillBord = false);
 
-        void Updata(View& view, Projection& projection, Quaternion q, bool isBillBord = false);
+        void MatrixUpdata(View& view, Projection& projection, Quaternion q, bool isBillBord = false);
 
         void Draw();
 

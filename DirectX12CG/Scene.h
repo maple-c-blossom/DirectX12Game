@@ -19,6 +19,7 @@
 #include <DirectXTex.h>
 #include <array>
 
+
 #pragma endregion 標準.h include
 
 #pragma region 自作.h include
@@ -53,6 +54,7 @@
 
 #include "RayObject.h"
 #include "SphereObj.h"
+#include "Player.h"
 
 #pragma endregion ゲーム系.h include
 
@@ -131,6 +133,7 @@ namespace MCB
 		Human human;
 		Object3d ground;
 		Object3d Skydorm;
+		Player* player;
 #pragma endregion 3Dオブジェクト
 
 		#pragma region スプライト
@@ -162,11 +165,16 @@ namespace MCB
 		void LoadSound()  override;
 		void Object3DInit()  override;
 		void SpriteInit()  override;
-
 		//---------------
+
 		void MatrixUpdate();
 		void Update() override;
 		void Draw() override;
+
+		//各描画系関数群---------------
+		void DrawSprite() override;
+		void Object3DDraw() override;
+		//-------------------
 	};
 
 }

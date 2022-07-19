@@ -53,7 +53,7 @@ void Object3d::Init()
     dx12->result = constBuffTranceform->Map(0, nullptr, (void**)&constMapTranceform);
 }
 
-void Object3d::Updata(View& view, Projection& projection,bool isBillBord)
+void Object3d::MatrixUpdata(View& view, Projection& projection,bool isBillBord)
 {
     matWorld.SetMatScale(scale.x, scale.y, scale.z);
     matWorld.SetMatRot(rotasion.x, rotasion.y, rotasion.z,false);
@@ -82,7 +82,7 @@ void Object3d::Updata(View& view, Projection& projection,bool isBillBord)
     constMapTranceform->mat = matWorld.matWorld * view.mat * projection.mat;
 }
 
-void Object3d::Updata(View& view, Projection& projection,Quaternion q, bool isBillBord)
+void Object3d::MatrixUpdata(View& view, Projection& projection,Quaternion q, bool isBillBord)
 {
     MCBMatrix matRot;
     matRot.MCBMatrixIdentity();

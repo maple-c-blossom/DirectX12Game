@@ -73,7 +73,7 @@ void MCB::Human::UpDate(View view, Projection proj)
 {
 	for (int i = 0; i < Box.size(); i++)
 	{
-		Box[i].Updata(view, proj);
+		Box[i].MatrixUpdata(view, proj);
 	}
 }
 
