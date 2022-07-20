@@ -301,26 +301,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         ground.Updata(matView, matProjection);
 
 
-
-#pragma endregion 更新処理
-
-#pragma region 描画処理
-
-        draw.PreDraw(depth, obj3dPipeline,  clearColor);
-
-        Skydorm.Draw();
-        ground.Draw();
-
-        //for (int i = 0; i < Box.size(); i++)
-        //{
-        //    Box[i].Draw();
-        //}
-
-        //for (int i = 0; i < Box2.size(); i++)
-        //{
-        //    Box2[i].Draw(0);
-        //}
-
         if (triangle.color.x > 1)
         {
             colorUpX = false;
@@ -398,12 +378,32 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         if (colorUpW)
         {
-            triangle.color.w += 0.04f;
+            triangle.color.w += 0.01f;
         }
         else
         {
-            triangle.color.w -= 0.04f;
+            triangle.color.w -= 0.01f;
         }
+
+#pragma endregion 更新処理
+
+#pragma region 描画処理
+
+        draw.PreDraw(depth, obj3dPipeline,  clearColor);
+
+        Skydorm.Draw();
+        ground.Draw();
+
+        //for (int i = 0; i < Box.size(); i++)
+        //{
+        //    Box[i].Draw();
+        //}
+
+        //for (int i = 0; i < Box2.size(); i++)
+        //{
+        //    Box2[i].Draw(0);
+        //}
+
 
 
         triangle.triangle.scale = { 20,20,1 };
@@ -413,7 +413,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         sprite.SpriteCommonBeginDraw(spritePipeline);
 
         //sprite.SpriteFlipDraw(sprite, *dx, descriptor, testTex, (float)dxWindow->window_width / 2, (float)dxWindow->window_height / 2);
-        debugText.Print(0, 600, 1, "%f", triangle.color.x);
+        debugText.Print(0, 100, 1, "color:R %f,G %f, B %f, A %f", triangle.color.x, triangle.color.y, triangle.color.z, triangle.color.w);
 
         //sprite.SpriteDraw(sprite, *dx, descriptor, ground.model->texture);
 
