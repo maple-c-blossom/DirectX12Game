@@ -311,15 +311,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         Skydorm.Draw();
         ground.Draw();
 
-        for (int i = 0; i < Box.size(); i++)
-        {
-            Box[i].Draw();
-        }
+        //for (int i = 0; i < Box.size(); i++)
+        //{
+        //    Box[i].Draw();
+        //}
 
-        for (int i = 0; i < Box2.size(); i++)
-        {
-            Box2[i].Draw(0);
-        }
+        //for (int i = 0; i < Box2.size(); i++)
+        //{
+        //    Box2[i].Draw(0);
+        //}
 
         if (triangle.color.x > 1)
         {
