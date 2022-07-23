@@ -31,11 +31,11 @@ void MCB::Player::Move()
 	playerObj.position.y += move.vec.y * speed;
 	playerObj.position.z += move.vec.z * speed;
 
-	//const Float3 moveLimit = {DxWindow::GetInstance()->window_width / 2 - 20.0f,DxWindow::GetInstance()->window_height / 2 - 20.0f, 0};
-	//playerObj.position.x = max(playerObj.position.x,moveLimit.x);
-	//playerObj.position.x = min(playerObj.position.x, -moveLimit.x);
-	//playerObj.position.y = max(playerObj.position.y, moveLimit.y);
-	//playerObj.position.y = min(playerObj.position.y, -moveLimit.x);
+	const Float3 moveLimit = {64.0f,34.0f, 0};
+	playerObj.position.x = max(playerObj.position.x, -moveLimit.x);
+	playerObj.position.x = min(playerObj.position.x, moveLimit.x);
+	playerObj.position.y = max(playerObj.position.y, -moveLimit.y);
+	playerObj.position.y = min(playerObj.position.y, moveLimit.y);
 
 
 }

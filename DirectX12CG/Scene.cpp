@@ -109,7 +109,7 @@ void MCB::Scene::Object3DDraw()
 void MCB::Scene::DrawSprite()
 {
 ;
-
+debugText.Print(20, 20, 1, "position:%f,%f,%f", player->playerObj.position.x, player->playerObj.position.y, player->playerObj.position.z);
     debugText.AllDraw();
 }
 
