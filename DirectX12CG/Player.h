@@ -3,7 +3,7 @@
 #include "Input.h"
 namespace MCB
 {
-	class Player
+	class Player:public Object3d
 	{
 
 		Input* input = Input::GetInstance();
@@ -11,10 +11,11 @@ namespace MCB
 		float speed = 1.5f;
 		void Move();
 	public:
-		Object3d playerObj;
 		void Initialize(Model* model);
 		void Update();
+		void MatUpdate(View view,Projection proj);
 		void Draw();
+		void Rotate();
 	};
 
 }

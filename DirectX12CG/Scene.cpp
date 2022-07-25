@@ -131,7 +131,7 @@ void MCB::Scene::MatrixUpdate()
     human.UpDate(matView, matProjection);
     Skydorm.MatrixUpdata(matView, matProjection);
     ground.MatrixUpdata(matView, matProjection);
-    player->playerObj.MatrixUpdata(matView, matProjection);
+    player->MatrixUpdata(matView, matProjection);
 }
 
 

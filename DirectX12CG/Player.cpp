@@ -27,32 +27,51 @@ void MCB::Player::Move()
 
 	move.V3Norm();
 
-	playerObj.position.x += move.vec.x * speed;
-	playerObj.position.y += move.vec.y * speed;
-	playerObj.position.z += move.vec.z * speed;
+	position.x += move.vec.x * speed;
+	position.y += move.vec.y * speed;
+	position.z += move.vec.z * speed;
 
 	const Float3 moveLimit = {64.0f,34.0f, 0};
-	playerObj.position.x = max(playerObj.position.x, -moveLimit.x);
-	playerObj.position.x = min(playerObj.position.x, moveLimit.x);
-	playerObj.position.y = max(playerObj.position.y, -moveLimit.y);
-	playerObj.position.y = min(playerObj.position.y, moveLimit.y);
+	position.x = max(position.x, -moveLimit.x);
+	position.x = min(position.x, moveLimit.x);
+	position.y = max(position.y, -moveLimit.y);
+	position.y = min(position.y, moveLimit.y);
 
 
 }
 
 void MCB::Player::Initialize(Model* model)
 {
-	playerObj.Init();
-	playerObj.model = model;
-	playerObj.scale = { 3,3,3 };
+	Init();
+	model = model;
+	scale = { 3,3,3 };
 }
 
 void MCB::Player::Update()
 {
 	Move();
+	Rotate();
+}
+
+void MCB::Player::MatUpdate(View view, Projection proj)
+{
+	MatrixUpdata(view, proj);
 }
 
 void MCB::Player::Draw()
 {
-	playerObj.Draw();
+	Draw();
+}
+
+void MCB::Player::Rotate()
+{
+	if (input->IsKeyDown(DIK_Q))
+	{
+		rotasion.y -= 0.04f;
+	}
+
+	if (input->IsKeyDown(DIK_E))
+	{
+		rotasion.y += 0.04f;
+	}
 }
