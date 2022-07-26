@@ -4,11 +4,12 @@
 
 namespace MCB
 {
-	class PlayerBullet:public Object3d
+	class PlayerBullet
 	{
-		Texture tex;
+		Texture* tex;
 	public:
-		void Initialize(Model* model,DirectX::XMFLOAT3 position);
+		Object3d obj;
+		void Initialize(Model* model,Texture* tex,Float3 position);
 		void Update();
 		void Draw();
 

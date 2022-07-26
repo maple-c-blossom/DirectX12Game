@@ -1,7 +1,9 @@
 #include "Player.h"
+#define IN input->
 
 using namespace MCB;
 using namespace DirectX;
+using namespace std;
 void MCB::Player::Move()
 {
 	Vector3D move = { 0,0,0 };
@@ -27,51 +29,70 @@ void MCB::Player::Move()
 
 	move.V3Norm();
 
-	position.x += move.vec.x * speed;
-	position.y += move.vec.y * speed;
-	position.z += move.vec.z * speed;
+	obj.position.x += move.vec.x * speed;
+	obj.position.y += move.vec.y * speed;
+	obj.position.z += move.vec.z * speed;
 
 	const Float3 moveLimit = {64.0f,34.0f, 0};
-	position.x = max(position.x, -moveLimit.x);
-	position.x = min(position.x, moveLimit.x);
-	position.y = max(position.y, -moveLimit.y);
-	position.y = min(position.y, moveLimit.y);
+	obj.position.x = max(obj.position.x, -moveLimit.x);
+	obj.position.x = min(obj.position.x, moveLimit.x);
+	obj.position.y = max(obj.position.y, -moveLimit.y);
+	obj.position.y = min(obj.position.y, moveLimit.y);
 
 
 }
 
 void MCB::Player::Initialize(Model* model)
 {
-	Init();
-	model = model;
-	scale = { 3,3,3 };
+	obj.Init();
+	obj.model = model;
+	obj.scale = { 3,3,3 };
+	bulletTex.CreateNoTextureFileIsTexture();
 }
 
 void MCB::Player::Update()
 {
 	Move();
 	Rotate();
+	Attack();
+	for (unique_ptr<PlayerBullet>& bullet : bullets) bullet->Update();
+	
 }
 
 void MCB::Player::MatUpdate(View view, Projection proj)
 {
-	MatrixUpdata(view, proj);
+	obj.MatrixUpdata(view, proj);
+	for (unique_ptr<PlayerBullet>& bullet : bullets) bullet.get()->obj.MatrixUpdata(view, proj);
 }
 
 void MCB::Player::Draw()
 {
-	Draw();
+	obj.Draw();
+	for (unique_ptr<PlayerBullet>& bullet : bullets) bullet->Draw();
 }
 
 void MCB::Player::Rotate()
 {
 	if (input->IsKeyDown(DIK_Q))
 	{
-		rotasion.y -= 0.04f;
+		obj.rotasion.y -= 0.04f;
 	}
 
 	if (input->IsKeyDown(DIK_E))
 	{
-		rotasion.y += 0.04f;
+		obj.rotasion.y += 0.04f;
+	}
+}
+
+void MCB::Player::Attack()
+{
+	if (IN IsKeyTrigger(DIK_SPACE))
+	{
+		Float3 Bposition;
+		Bposition.x = obj.position.x, Bposition.y = obj.position.y, Bposition.z = obj.position.z;
+		std::unique_ptr<PlayerBullet> bullet = make_unique<PlayerBullet>();
+		bullet->Initialize(obj.model, &bulletTex, Bposition);
+		bullets.push_back(move(bullet));
+
 	}
 }

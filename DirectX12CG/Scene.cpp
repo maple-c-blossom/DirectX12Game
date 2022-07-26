@@ -109,7 +109,7 @@ void MCB::Scene::Object3DDraw()
 void MCB::Scene::DrawSprite()
 {
 ;
-debugText.Print(20, 20, 1, "position:%f,%f,%f", player->playerObj.position.x, player->playerObj.position.y, player->playerObj.position.z);
+debugText.Print(20, 20, 1, "position:%f,%f,%f", player->obj.position.x, player->obj.position.y, player->obj.position.z);
     debugText.AllDraw();
 }
 
@@ -131,7 +131,7 @@ void MCB::Scene::MatrixUpdate()
     human.UpDate(matView, matProjection);
     Skydorm.MatrixUpdata(matView, matProjection);
     ground.MatrixUpdata(matView, matProjection);
-    player->MatrixUpdata(matView, matProjection);
+    player->MatUpdate(matView, matProjection);
 }
 
 

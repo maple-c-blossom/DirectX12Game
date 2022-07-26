@@ -1,11 +1,12 @@
 #include "PlayerBullet.h"
 
-void MCB::PlayerBullet::Initialize(Model* model, DirectX::XMFLOAT3 position)
+void MCB::PlayerBullet::Initialize(Model* model, Texture* tex, Float3 position)
 {
 	if (model == nullptr) return;
-	this->model = model;
-	this->position = position;
-	tex.CreateNoTextureFileIsTexture();
+	obj.Init();
+	obj.model = model;
+	obj.position.x = position.x, obj.position.y = position.y, obj.position.z = position.z;
+	this->tex = tex;
 }
 
 void MCB::PlayerBullet::Update()
@@ -15,5 +16,5 @@ void MCB::PlayerBullet::Update()
 
 void MCB::PlayerBullet::Draw()
 {
-	Object3d::Draw(tex.incrementNum);
+	obj.Draw(tex->incrementNum);
 }
